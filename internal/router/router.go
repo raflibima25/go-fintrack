@@ -2,18 +2,29 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-manajemen-keuangan/internal/controller"
+	"go-manajemen-keuangan/internal/model"
+	"go-manajemen-keuangan/internal/service"
 	"gorm.io/gorm"
+	"net/http"
 )
 
 func InitRoutes(r *gin.Engine, db *gorm.DB) {
-	// middleware
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
+	// init user service dan controller
+	userService := &service.UserService{DB: db}
+	userController := &controller.UserController{UserService: userService}
 
 	// Healtcheck endpoint
 	r.GET("/health-check", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "ok",
+		c.JSON(http.StatusOK, model.ApiResponse{
+			ResponseStatus:  true,
+			ResponseMessage: "ok",
+			Data:            nil,
 		})
 	})
+
+	userRouter := r.Group("/user")
+	{
+		userRouter.POST("/register", userController.RegisterHandler)
+	}
 }

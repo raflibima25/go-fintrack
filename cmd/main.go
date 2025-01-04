@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"go-manajemen-keuangan/internal/config"
+	"go-manajemen-keuangan/internal/middleware"
 	"go-manajemen-keuangan/internal/router"
 	"os"
 )
@@ -12,9 +13,9 @@ func main() {
 	// connect database
 	db := config.ConnectDB()
 	if db == nil {
-		logrus.Fatal("failed to connect database")
+		logrus.Fatal("Failed to connect database")
 	}
-	logrus.Info("database connected successfully")
+	logrus.Info("Database connected!")
 
 	// set gin mode
 	ginMode := os.Getenv("GIN_MODE")
@@ -25,7 +26,8 @@ func main() {
 	}
 
 	// init gin router
-	r := gin.New()
+	r := gin.Default()
+	r.Use(middleware.CorsMiddleware())
 
 	// setup router
 	router.InitRoutes(r, db)
@@ -37,7 +39,7 @@ func main() {
 
 	// start HTTTP server
 	logrus.Infof("Starting server on port :%s", serverPort)
-	if err := r.Run(":8080"); err != nil {
-		logrus.Fatalf("HTTP Server failed to start:", err)
+	if err := r.Run(":" + serverPort); err != nil {
+		logrus.Fatalf("HTTP server failed to start: %v", err)
 	}
 }
