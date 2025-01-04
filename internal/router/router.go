@@ -26,5 +26,6 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	userRouter := r.Group("/user")
 	{
 		userRouter.POST("/register", userController.RegisterHandler)
+		userRouter.POST("/login", userController.LoginHandler)
 	}
 }

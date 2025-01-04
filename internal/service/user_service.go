@@ -39,3 +39,23 @@ func (s *UserService) RegisterUser(name, email, username, password string) error
 
 	return nil
 }
+
+func (s *UserService) Login(emailOrUsername, password string) (string, error) {
+	var user entity.User
+
+	if err := s.DB.Where("email = ? OR username = ?", emailOrUsername, emailOrUsername).First(&user).Error; err != nil {
+		return "", errors.New("Email, username atau password salah")
+	}
+
+	if err := utility.CompareHashAndPassword(user.Password, password); err != nil {
+		return "", errors.New("Email, username atau password salah")
+	}
+
+	// generate jwt
+	token, err := utility.GenerateJWT(user.ID, user.Username)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
