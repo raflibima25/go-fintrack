@@ -2,7 +2,8 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-manajemen-keuangan/internal/model"
+	model2 "go-manajemen-keuangan/internal/payload/request"
+	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
 	"net/http"
 )
@@ -12,9 +13,9 @@ type UserController struct {
 }
 
 func (c UserController) RegisterHandler(ctx *gin.Context) {
-	var req model.RegisterModel
+	var req model2.RegisterModel
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, model.ApiResponse{
+		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
 			ResponseMessage: "Invalid input",
 			Data:            err.Error(),
@@ -23,7 +24,7 @@ func (c UserController) RegisterHandler(ctx *gin.Context) {
 	}
 
 	if req.Password != req.ConfirmPassword {
-		ctx.JSON(http.StatusBadRequest, model.ApiResponse{
+		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
 			ResponseMessage: "Password dan Confirm password do not match",
 			Data:            nil,
@@ -33,7 +34,7 @@ func (c UserController) RegisterHandler(ctx *gin.Context) {
 
 	err := c.UserService.RegisterUser(req.Name, req.Email, req.Username, req.Password)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, model.ApiResponse{
+		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
 			ResponseMessage: err.Error(),
 			Data:            nil,
@@ -41,10 +42,10 @@ func (c UserController) RegisterHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, model.ApiResponse{
+	ctx.JSON(http.StatusOK, response.ApiResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "User registered",
-		Data: model.RegisterModel{
+		Data: model2.RegisterModel{
 			Name:     req.Name,
 			Username: req.Username,
 			Email:    req.Email,

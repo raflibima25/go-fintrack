@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
-	"go-manajemen-keuangan/internal/entity"
+	entity2 "go-manajemen-keuangan/internal/payload/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -32,9 +32,9 @@ func ConnectDB() *gorm.DB {
 	}
 
 	if err = db.AutoMigrate(
-		&entity.User{},
-		&entity.Category{},
-		&entity.Transaction{},
+		&entity2.User{},
+		&entity2.Category{},
+		&entity2.Transaction{},
 	); err != nil {
 		logrus.Fatal("Auto migration failed:", err)
 	}

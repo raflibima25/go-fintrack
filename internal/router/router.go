@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"go-manajemen-keuangan/internal/controller"
-	"go-manajemen-keuangan/internal/model"
+	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
 	"gorm.io/gorm"
 	"net/http"
@@ -16,7 +16,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 
 	// Healtcheck endpoint
 	r.GET("/health-check", func(c *gin.Context) {
-		c.JSON(http.StatusOK, model.ApiResponse{
+		c.JSON(http.StatusOK, response.ApiResponse{
 			ResponseStatus:  true,
 			ResponseMessage: "ok",
 			Data:            nil,
