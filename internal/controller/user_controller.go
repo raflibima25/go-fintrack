@@ -71,7 +71,7 @@ func (c *UserController) LoginHandler(ctx *gin.Context) {
 	logrus.Infof("Login attempt for: %s:", loginPayload.EmailOrUsername) // debug
 
 	// proses login
-	token, err := c.UserService.Login(loginPayload.EmailOrUsername, loginPayload.Password)
+	token, user, err := c.UserService.Login(loginPayload.EmailOrUsername, loginPayload.Password)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
 			ResponseStatus:  false,
@@ -85,9 +85,10 @@ func (c *UserController) LoginHandler(ctx *gin.Context) {
 		ResponseStatus:  true,
 		ResponseMessage: "Login successful",
 		Data: response.LoginResponse{
-			Name:        loginPayload.EmailOrUsername,
+			Name:        user.Name,
 			AccessToken: token,
-			Expiration:  time.Now().Add(24 * time.Hour), // PR belum
+			Expiration:  time.Now().Add(24 * time.Hour),
+			IsAdmin:     user.IsAdmin,
 		},
 	})
 }

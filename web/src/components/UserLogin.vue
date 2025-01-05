@@ -28,7 +28,14 @@ export default {
         });
         if (response.data.status) {
           localStorage.setItem("token", response.data.data.access_token);
-          this.$router.push("/dashboard");
+          localStorage.setItem("isAdmin", response.data.data.is_admin);
+
+          // redirect berdasarkan role
+          if (response.data.data.is_admin) {
+            this.$router.push("/admin-dashboard");
+          } else {
+            this.$router.push("/dashboard");
+          }
         } else {
           alert(response.data.message || "Login gagal");
         }

@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"go-manajemen-keuangan/internal/controller"
+	"go-manajemen-keuangan/internal/middleware"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
 	"gorm.io/gorm"
@@ -30,6 +31,13 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 		{
 			userRouter.POST("/register", userController.RegisterHandler)
 			userRouter.POST("/login", userController.LoginHandler)
+		}
+
+		// admin endpoint
+		adminRouter := api.Group("/admin")
+		adminRouter.Use(middleware.Authentication(), middleware.AdminOnly())
+		{
+			//	router admin
 		}
 	}
 

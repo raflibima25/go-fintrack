@@ -9,10 +9,11 @@ import (
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
-func GenerateJWT(userID uint, username string) (string, error) {
+func GenerateJWT(userID uint, username string, isAdmin bool) (string, error) {
 	claims := jwt.MapClaims{
 		"sub":      userID,
 		"username": username,
+		"is_admin": isAdmin,
 		"exp":      time.Now().Add(24 * time.Hour).Unix(), // 24 jam
 	}
 
