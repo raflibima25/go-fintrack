@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
@@ -58,6 +59,7 @@ func (c *UserController) LoginHandler(ctx *gin.Context) {
 	var loginPayload request.LoginRequest
 
 	if err := ctx.ShouldBindJSON(&loginPayload); err != nil {
+		logrus.Errorf("Invalid input: %v", err) // debug
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
 			ResponseMessage: "Invalid input",
@@ -65,6 +67,8 @@ func (c *UserController) LoginHandler(ctx *gin.Context) {
 		})
 		return
 	}
+
+	logrus.Infof("Login attempt for: %s:", loginPayload.EmailOrUsername) // debug
 
 	// proses login
 	token, err := c.UserService.Login(loginPayload.EmailOrUsername, loginPayload.Password)

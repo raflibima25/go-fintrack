@@ -14,18 +14,33 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	userService := &service.UserService{DB: db}
 	userController := &controller.UserController{UserService: userService}
 
-	// Healtcheck endpoint
-	r.GET("/health-check", func(c *gin.Context) {
-		c.JSON(http.StatusOK, response.ApiResponse{
-			ResponseStatus:  true,
-			ResponseMessage: "ok",
-			Data:            nil,
-		})
-	})
-
-	userRouter := r.Group("/user")
+	// API routes group
+	api := r.Group("/api")
 	{
-		userRouter.POST("/register", userController.RegisterHandler)
-		userRouter.POST("/login", userController.LoginHandler)
+		api.GET("/health-check", func(c *gin.Context) {
+			c.JSON(http.StatusOK, response.ApiResponse{
+				ResponseStatus:  true,
+				ResponseMessage: "ok",
+				Data:            nil,
+			})
+		})
+
+		// user endpoint
+		userRouter := api.Group("/user")
+		{
+			userRouter.POST("/register", userController.RegisterHandler)
+			userRouter.POST("/login", userController.LoginHandler)
+		}
 	}
+
+	// serve frontend static file
+	r.Static("/js", "./web/dist/js")
+	r.Static("/css", "./web/dist/css")
+	r.Static("/assets", "./web/dist/assets")
+	r.StaticFile("/favicon.ico", "./web/dist/favicon.ico")
+
+	// handle SPA routing
+	r.NoRoute(func(c *gin.Context) {
+		c.File("./web/dist/index.html")
+	})
 }
