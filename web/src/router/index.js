@@ -3,11 +3,17 @@ import Login from "@/views/UserLogin.vue";
 import Register from "@/views/UserRegister.vue";
 import DashboardUser from "@/views/DashboardUser.vue";
 import DashboardAdmin from "@/views/DashboardAdmin.vue";
+import PageNotFound from "@/views/PageNotFound.vue";
 
 const routes = [
     {
         path: "/",
         redirect: "/login"
+    },
+    {
+        path: "/:pathMatch(.*)*",
+        name: "NotFound",
+        component: PageNotFound
     },
     {
         path: "/login",

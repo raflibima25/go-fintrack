@@ -8,6 +8,7 @@ import (
 	"go-manajemen-keuangan/internal/service"
 	"gorm.io/gorm"
 	"net/http"
+	"strings"
 )
 
 func InitRoutes(r *gin.Engine, db *gorm.DB) {
@@ -48,7 +49,17 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	r.StaticFile("/favicon.ico", "./web/dist/favicon.ico")
 
 	// handle SPA routing
-	r.NoRoute(func(c *gin.Context) {
-		c.File("./web/dist/index.html")
+	r.NoRoute(func(ctx *gin.Context) {
+		// not found enpoint
+		if strings.HasPrefix(ctx.Request.URL.Path, "/api/") {
+			ctx.JSON(http.StatusNotFound, response.ApiResponse{
+				ResponseStatus:  false,
+				ResponseMessage: "Endpoint not found",
+				Data:            nil,
+			})
+			return
+		}
+
+		ctx.File("./web/dist/index.html")
 	})
 }
