@@ -16,6 +16,9 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	userService := &service.UserService{DB: db}
 	userController := &controller.UserController{UserService: userService}
 
+	categoryService := &service.CategoryService{DB: db}
+	categoryController := &controller.CategoryController{CategoryService: categoryService}
+
 	// API routes group
 	api := r.Group("/api")
 	{
@@ -39,6 +42,17 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 		adminRouter.Use(middleware.Authentication(), middleware.AdminOnly())
 		{
 			//	router admin
+		}
+
+		// category endpoint
+		categoryRouter := api.Group("/category")
+		categoryRouter.Use(middleware.Authentication())
+		{
+			categoryRouter.GET("", categoryController.GetAllCategoriesHandler)
+			categoryRouter.GET("/:id", categoryController.GetCategoryIdHandler)
+			categoryRouter.POST("", categoryController.CreateCategoryHandler)
+			categoryRouter.PUT("/:id", categoryController.UpdateCategoryHandler)
+			categoryRouter.DELETE("/:id", categoryController.DeleteCategoryHandler)
 		}
 	}
 
