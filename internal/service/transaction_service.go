@@ -1,8 +1,11 @@
 package service
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/xuri/excelize/v2"
 	"go-manajemen-keuangan/internal/payload/entity"
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
@@ -203,4 +206,84 @@ func (s *TransactionService) DeleteTransaction(userID uint, transactionID uint) 
 	}
 
 	return nil
+}
+
+func (s *TransactionService) ExportTransactionsExcel(userID uint, filter request.TransactionFilter) (*bytes.Buffer, error) {
+	transactions, err := s.GetTransactionByUser(userID, filter)
+	if err != nil {
+		logrus.Errorf("Error getting transactions: %v", err)
+		return nil, err
+	}
+
+	f := excelize.NewFile()
+
+	// Buat sheet baru
+	sheet := "Transactions"
+	index, err := f.NewSheet(sheet)
+	if err != nil {
+		logrus.Errorf("Error creating sheet: %v", err)
+		return nil, err
+	}
+	f.SetActiveSheet(index)
+
+	// Set header
+	headers := []string{"Date", "Type", "Category", "Amount", "Description"}
+	for i, header := range headers {
+		cell := fmt.Sprintf("%s1", string(rune('A'+i)))
+		if err := f.SetCellValue(sheet, cell, header); err != nil {
+			logrus.Errorf("Error setting header: %v", err)
+			return nil, err
+		}
+	}
+
+	// Isi data
+	for i, tx := range transactions.Transactions {
+		row := i + 2
+		if err := f.SetCellValue(sheet, fmt.Sprintf("A%d", row), tx.Date.Format("2006-01-02")); err != nil {
+			return nil, err
+		}
+		if err := f.SetCellValue(sheet, fmt.Sprintf("B%d", row), tx.Type); err != nil {
+			return nil, err
+		}
+		if err := f.SetCellValue(sheet, fmt.Sprintf("C%d", row), tx.Category); err != nil {
+			return nil, err
+		}
+		if err := f.SetCellValue(sheet, fmt.Sprintf("D%d", row), tx.Amount); err != nil {
+			return nil, err
+		}
+		if err := f.SetCellValue(sheet, fmt.Sprintf("E%d", row), tx.Description); err != nil {
+			return nil, err
+		}
+	}
+
+	// Tambah summary
+	summaryRow := len(transactions.Transactions) + 4
+	f.SetCellValue(sheet, fmt.Sprintf("A%d", summaryRow), "Summary")
+	f.SetCellValue(sheet, fmt.Sprintf("B%d", summaryRow), "Total Pemasukan")
+	f.SetCellValue(sheet, fmt.Sprintf("C%d", summaryRow), transactions.Summary.TotalIncome)
+	f.SetCellValue(sheet, fmt.Sprintf("B%d", summaryRow+1), "Total Pengeluaran")
+	f.SetCellValue(sheet, fmt.Sprintf("C%d", summaryRow+1), transactions.Summary.TotalExpense)
+	f.SetCellValue(sheet, fmt.Sprintf("B%d", summaryRow+2), "Saldo")
+	f.SetCellValue(sheet, fmt.Sprintf("C%d", summaryRow+2), transactions.Summary.Balance)
+
+	// Styling
+	if style, err := f.NewStyle(&excelize.Style{
+		NumFmt: 44, // Format currency
+	}); err == nil {
+		// Set style untuk kolom amount dan summary
+		for i := 2; i <= len(transactions.Transactions)+1; i++ {
+			f.SetCellStyle(sheet, fmt.Sprintf("D%d", i), fmt.Sprintf("D%d", i), style)
+		}
+		f.SetCellStyle(sheet, fmt.Sprintf("C%d", summaryRow), fmt.Sprintf("C%d", summaryRow+2), style)
+	}
+
+	// Save ke buffer
+	buffer := new(bytes.Buffer)
+	_, err = f.WriteTo(buffer)
+	if err != nil {
+		logrus.Errorf("Error writing to buffer: %v", err)
+		return nil, err
+	}
+
+	return buffer, nil
 }

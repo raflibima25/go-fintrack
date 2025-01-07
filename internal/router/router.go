@@ -67,6 +67,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 			transactionRouter.POST("", transactionController.CreateTransactionHandler)
 			transactionRouter.PUT("/:id", transactionController.UpdateTransactionHandler)
 			transactionRouter.DELETE("/:id", transactionController.DeleteTransactionHandler)
+			transactionRouter.GET("/export", transactionController.ExportTransactionsExcelHandler)
 		}
 	}
 

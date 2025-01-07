@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"go-manajemen-keuangan/internal/payload/request"
@@ -9,6 +10,7 @@ import (
 	"go-manajemen-keuangan/internal/utility"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type TransactionController struct {
@@ -177,4 +179,51 @@ func (c *TransactionController) DeleteTransactionHandler(ctx *gin.Context) {
 		ResponseMessage: "Transaction deleted",
 		Data:            nil,
 	})
+}
+
+func (c *TransactionController) ExportTransactionsExcelHandler(ctx *gin.Context) {
+	userID, err := utility.GetUserIDFromContext(ctx)
+	if err != nil {
+		logrus.Errorf("Error getting user ID: %v", err)
+		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
+	var filter request.TransactionFilter
+	if err := ctx.ShouldBindQuery(&filter); err != nil {
+		logrus.Errorf("Error binding query params: %v", err)
+		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: "Invalid filter parameters: " + err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
+	buffer, err := c.TransactionService.ExportTransactionsExcel(userID, filter)
+	if err != nil {
+		logrus.Errorf("Error exporting transactions: %v", err)
+		ctx.JSON(http.StatusInternalServerError, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: "Failed to export transactions: " + err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
+	// Set response headers
+	filename := fmt.Sprintf("transactions_%s.xlsx", time.Now().Format("20060102"))
+	ctx.Header("Content-Description", "File Transfer")
+	ctx.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	ctx.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	ctx.Header("Content-Transfer-Encoding", "binary")
+	ctx.Header("Expires", "0")
+	ctx.Header("Cache-Control", "must-revalidate")
+	ctx.Header("Pragma", "public")
+
+	ctx.Data(http.StatusOK, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", buffer.Bytes())
 }
