@@ -16,8 +16,13 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	userService := &service.UserService{DB: db}
 	userController := &controller.UserController{UserService: userService}
 
+	// init category
 	categoryService := &service.CategoryService{DB: db}
 	categoryController := &controller.CategoryController{CategoryService: categoryService}
+
+	// init transaction
+	transactionService := &service.TransactionService{DB: db}
+	transactionController := &controller.TransactionController{TransactionService: transactionService}
 
 	// API routes group
 	api := r.Group("/api")
@@ -53,6 +58,12 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 			categoryRouter.POST("", categoryController.CreateCategoryHandler)
 			categoryRouter.PUT("/:id", categoryController.UpdateCategoryHandler)
 			categoryRouter.DELETE("/:id", categoryController.DeleteCategoryHandler)
+		}
+
+		transactionRouter := api.Group("/transaction")
+		transactionRouter.Use(middleware.Authentication())
+		{
+			transactionRouter.POST("", transactionController.CreateTransactionHandler)
 		}
 	}
 
