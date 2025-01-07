@@ -100,7 +100,7 @@ func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	var req request.CategoryRequest
+	var req request.UpdateCategoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
