@@ -40,9 +40,9 @@ func (s *CategoryService) GetCategories() ([]response.CategoryResponse, error) {
 	return categoryResponse, nil
 }
 
-func (s *CategoryService) GetCategoryByID(id uint) (*response.CategoryResponse, error) {
+func (s *CategoryService) GetCategoryByID(categoryID uint) (*response.CategoryResponse, error) {
 	var category entity.Category
-	if err := s.DB.First(&category, id).Error; err != nil {
+	if err := s.DB.First(&category, categoryID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("category not found")
 		}
@@ -90,12 +90,12 @@ func (s *CategoryService) CreateCategory(name string) (*response.CategoryRespons
 	}, nil
 }
 
-func (s *CategoryService) UpdateCategory(id uint, name string) (*response.CategoryResponse, error) {
+func (s *CategoryService) UpdateCategory(categoryID uint, name string) (*response.CategoryResponse, error) {
 	nameToLower := strings.ToLower(strings.TrimSpace(name))
 
 	// check category
 	var category entity.Category
-	if err := s.DB.First(&category, id).Error; err != nil {
+	if err := s.DB.First(&category, categoryID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("category not found")
 		}
@@ -104,7 +104,7 @@ func (s *CategoryService) UpdateCategory(id uint, name string) (*response.Catego
 
 	// check nama baru setelah update already exists
 	var existingCategory entity.Category
-	if err := s.DB.Where("LOWER(name) = ? AND id != ?", nameToLower, id).First(&existingCategory).Error; err == nil {
+	if err := s.DB.Where("LOWER(name) = ? AND id != ?", nameToLower, categoryID).First(&existingCategory).Error; err == nil {
 		return nil, errors.New("category name already exists")
 	}
 
@@ -122,8 +122,8 @@ func (s *CategoryService) UpdateCategory(id uint, name string) (*response.Catego
 	}, nil
 }
 
-func (s *CategoryService) DeleteCategory(id uint) error {
-	result := s.DB.Delete(&entity.Category{}, id)
+func (s *CategoryService) DeleteCategory(categoryID uint) error {
+	result := s.DB.Delete(&entity.Category{}, categoryID)
 	if result.Error != nil {
 		return errors.New("failed to delete category")
 	}

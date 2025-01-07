@@ -82,7 +82,7 @@ func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusCreated, response.ApiResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Category created!",
 		Data:            category,

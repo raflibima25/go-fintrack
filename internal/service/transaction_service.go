@@ -98,3 +98,64 @@ func (s *TransactionService) CreateTransaction(userID uint, req request.CreateTr
 		UpdatedAt:   transaction.UpdatedAt,
 	}, nil
 }
+
+func (s *TransactionService) UpdateTransaction(userID uint, transactionID uint, req request.UpdateTransactionRequest) (*response.TransactionResponse, error) {
+	var transaction entity.Transaction
+	if err := s.DB.Where("id = ? AND user_id = ?", transactionID, userID).
+		First(&transaction).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("transaction not found")
+		}
+		logrus.Errorf("Error getting transaction: %v", err)
+		return nil, errors.New("failed to get transaction")
+	}
+
+	var category entity.Category
+	if err := s.DB.First(&category, req.CategoryID).Error; err != nil {
+		logrus.Errorf("Error category not found: %v", err)
+		return nil, errors.New("category not found")
+	}
+
+	date, err := time.Parse("2006-01-02", req.Date)
+	if err != nil {
+		logrus.Errorf("Error invalid date format: %v", err)
+		return nil, errors.New("invalid date format")
+	}
+
+	transaction.CategoryID = req.CategoryID
+	transaction.Amount = req.Amount
+	transaction.Type = req.Type
+	transaction.Description = req.Description
+	transaction.Date = date
+
+	if err := s.DB.Save(&transaction).Error; err != nil {
+		logrus.Errorf("Error update transaction: %v", err)
+		return nil, errors.New("failed to update transaction")
+	}
+
+	return &response.TransactionResponse{
+		ID:          transaction.ID,
+		CategoryID:  transaction.CategoryID,
+		Category:    category.Name,
+		Amount:      transaction.Amount,
+		Type:        transaction.Type,
+		Description: transaction.Description,
+		Date:        transaction.Date,
+		CreatedAt:   transaction.CreatedAt,
+		UpdatedAt:   transaction.UpdatedAt,
+	}, nil
+}
+
+func (s *TransactionService) DeleteTransaction(userID uint, transactionID uint) error {
+	result := s.DB.Where("id = ? AND user_id = ?", transactionID, userID).Delete(&entity.Transaction{})
+	if result.Error != nil {
+		logrus.Errorf("Error to delete transaction: %v", result.Error)
+		return errors.New("failed to delete transaction")
+	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("transaction not found")
+	}
+
+	return nil
+}
