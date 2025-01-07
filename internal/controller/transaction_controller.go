@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
@@ -14,7 +13,7 @@ type TransactionController struct {
 	TransactionService *service.TransactionService
 }
 
-func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
+func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
@@ -25,7 +24,33 @@ func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println("userID:", userID) // debug
+	transactions, err := c.TransactionService.GetTransactionByUser(userID)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response.ApiResponse{
+		ResponseStatus:  true,
+		ResponseMessage: "Get transactions successful",
+		Data:            transactions,
+	})
+}
+
+func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
+	userID, err := utility.GetUserIDFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: err.Error(),
+			Data:            nil,
+		})
+		return
+	}
 
 	var req request.CreateTransactionRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

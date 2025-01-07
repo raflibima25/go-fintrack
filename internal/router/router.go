@@ -63,6 +63,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 		transactionRouter := api.Group("/transaction")
 		transactionRouter.Use(middleware.Authentication())
 		{
+			transactionRouter.GET("", transactionController.GetTransactionHandler)
 			transactionRouter.POST("", transactionController.CreateTransactionHandler)
 		}
 	}

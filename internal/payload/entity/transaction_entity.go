@@ -22,7 +22,7 @@ func (t *Transaction) BeforeSave(tx *gorm.DB) (err error) {
 	// validasi tipe transaksi
 	validTypes := map[string]bool{
 		"income":  true,
-		"expense": false,
+		"expense": true,
 	}
 	if !validTypes[t.Type] {
 		return fmt.Errorf("invalid transaction type: %s", t.Type)
