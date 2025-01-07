@@ -21,6 +21,7 @@ type TransactionSummary struct {
 }
 
 type TransactionListResponse struct {
-	Transaction []TransactionResponse `json:"transactions"`
-	Summary     TransactionSummary    `json:"summary"`
+	Transactions []TransactionResponse `json:"transactions"`
+	Summary      TransactionSummary    `json:"summary"`
+	Pagination   Pagination            `json:"pagination"`
 }

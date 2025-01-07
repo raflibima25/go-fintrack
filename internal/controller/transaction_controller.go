@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
@@ -25,7 +26,20 @@ func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 		return
 	}
 
-	transactions, err := c.TransactionService.GetTransactionByUser(userID)
+	var filter request.TransactionFilter
+	if err := ctx.ShouldBindQuery(&filter); err != nil {
+		logrus.Errorf("Error binding query params: %v", err)
+		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: "Invalid filter parameters: " + err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
+	logrus.Infof("Received filter: %+v", filter) // debug
+
+	transactions, err := c.TransactionService.GetTransactionByUser(userID, filter)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
 			ResponseStatus:  false,

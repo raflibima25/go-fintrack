@@ -7,6 +7,7 @@ import (
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
 	"gorm.io/gorm"
+	"math"
 	"time"
 )
 
@@ -14,13 +15,51 @@ type TransactionService struct {
 	DB *gorm.DB
 }
 
-func (s *TransactionService) GetTransactionByUser(userID uint) (*response.TransactionListResponse, error) {
+func (s *TransactionService) GetTransactionByUser(userID uint, filter request.TransactionFilter) (*response.TransactionListResponse, error) {
+	logrus.Infof("Applying filter: %+v", filter) // debug
+
 	var transactions []entity.Transaction
 
-	if err := s.DB.Preload("Category").
-		Where("user_id = ?", userID).
-		Order("date DESC").
-		Find(&transactions).Error; err != nil {
+	query := s.DB.Preload("Category").Where("user_id = ?", userID)
+
+	// filter tanggal
+	if filter.StartDate != "" {
+		startDate, err := time.Parse("2006-01-02", filter.StartDate)
+		if err == nil {
+			query = query.Where("date >= ?", startDate)
+		}
+	}
+
+	if filter.EndDate != "" {
+		endDate, err := time.Parse("2006-01-02", filter.EndDate)
+		if err == nil {
+			query = query.Where("date <= ?", endDate)
+		}
+	}
+
+	// filter kategori
+	if filter.CategoryID != 0 {
+		query = query.Where("category_id = ?", filter.CategoryID)
+	}
+
+	// filter tipe transaksi
+	if filter.Type != "" {
+		query = query.Where("type = ?", filter.Type)
+	}
+
+	// hitung total untuk pagination
+	var total int64
+	if err := query.Model(&entity.Transaction{}).Count(&total).Error; err != nil {
+		return nil, errors.New("failed to count transaction")
+	}
+
+	// terapkan pagination
+	offset := (filter.Page - 1) * filter.Limit
+	query = query.Order("date DESC").
+		Offset(offset).
+		Limit(filter.Limit)
+
+	if err := query.Find(&transactions).Error; err != nil {
 		return nil, errors.New("failed to get transactions")
 	}
 
@@ -49,11 +88,17 @@ func (s *TransactionService) GetTransactionByUser(userID uint) (*response.Transa
 	}
 
 	return &response.TransactionListResponse{
-		Transaction: transactionResponses,
+		Transactions: transactionResponses,
 		Summary: response.TransactionSummary{
 			TotalIncome:  totalIncome,
 			TotalExpense: totalExpense,
 			Balance:      totalIncome - totalExpense,
+		},
+		Pagination: response.Pagination{
+			CurrentPage: filter.Page,
+			TotalPage:   int(math.Ceil(float64(total) / float64(filter.Limit))),
+			TotalItems:  total,
+			ItemPerPage: filter.Limit,
 		},
 	}, nil
 }
