@@ -11,8 +11,8 @@ import (
 
 func Authentication() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		autHeader := ctx.GetHeader("Authorization")
-		if autHeader == "" {
+		authHeader := ctx.GetHeader("Authorization")
+		if authHeader == "" {
 			ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
 				ResponseStatus:  false,
 				ResponseMessage: "Authorization header is missing",
@@ -23,7 +23,7 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		// ambil token setelah bearer
-		tokenString := strings.Split(autHeader, "Bearer ")[1]
+		tokenString := strings.Split(authHeader, "Bearer ")[1]
 		token, err := utility.ParseJWT(tokenString)
 		if err != nil || !token.Valid {
 			ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
