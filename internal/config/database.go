@@ -2,21 +2,14 @@ package config
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
-	entity2 "go-manajemen-keuangan/internal/payload/entity"
+	"go-manajemen-keuangan/internal/payload/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 	"os"
 )
 
 func ConnectDB() *gorm.DB {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	var (
 		host     = os.Getenv("DB_HOST")
 		user     = os.Getenv("DB_USER")
@@ -32,9 +25,9 @@ func ConnectDB() *gorm.DB {
 	}
 
 	if err = db.AutoMigrate(
-		&entity2.User{},
-		&entity2.Category{},
-		&entity2.Transaction{},
+		&entity.User{},
+		&entity.Category{},
+		&entity.Transaction{},
 	); err != nil {
 		logrus.Fatal("Auto migration failed:", err)
 	}

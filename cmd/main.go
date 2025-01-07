@@ -2,14 +2,21 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go-manajemen-keuangan/internal/config"
 	"go-manajemen-keuangan/internal/middleware"
 	"go-manajemen-keuangan/internal/router"
+	"log"
 	"os"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// connect database
 	db := config.ConnectDB()
 	if db == nil {
