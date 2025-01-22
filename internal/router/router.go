@@ -60,6 +60,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 			categoryRouter.DELETE("/:id", categoryController.DeleteCategoryHandler)
 		}
 
+		// transaction endpoint
 		transactionRouter := api.Group("/transaction")
 		transactionRouter.Use(middleware.Authentication())
 		{

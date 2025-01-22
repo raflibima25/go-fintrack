@@ -11,17 +11,20 @@
         </button>
       </div>
 
-      <!-- Tambahkan konten dashboard di sini -->
-      <div class="mt-4">
-        <p class="text-gray-600">Selamat datang di dashboard aplikasi manajemen keuangan.</p>
+      <!-- content -->
+      <div class="max-w-7xl mx-auto">
+        <TransactionList />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import TransactionList from "@/views/TransactionList.vue";
+
 export default {
   name: 'DashboardUser',
+  components: {TransactionList},
 
   created() {
     this.checkAuth();
