@@ -1,4 +1,3 @@
-# TransactionModal.vue
 <template>
   <BaseModal :show="show" @close="closeModal">
     <template #title>
@@ -17,7 +16,7 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-          <select v-model="form.categoryId" required
+          <select v-model="form.category_id" required
                   class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
@@ -109,7 +108,7 @@ export default {
   setup(props, { emit }) {
     const form = ref({
       type: 'expense',
-      categoryId: '',
+      category_id: '',
       amount: '',
       date: new Date().toISOString().split('T')[0],
       description: ''
@@ -122,16 +121,16 @@ export default {
       if (newVal) {
         form.value = {
           type: newVal.type,
-          categoryId: newVal.categoryId,
+          category_id: newVal.category_id,
           amount: newVal.amount,
-          date: new Date(newVal.date).toISOString().split('T')[0],
+          date: newVal.date.split('T')[0], // Mengambil hanya tanggal dari ISO string
           description: newVal.description
         }
       } else {
         // Reset form ketika membuat baru
         form.value = {
           type: 'expense',
-          categoryId: props.categories[0]?.id || '',
+          category_id: props.categories[0]?.id || '',
           amount: '',
           date: new Date().toISOString().split('T')[0],
           description: ''
@@ -145,14 +144,15 @@ export default {
 
     const handleSubmit = () => {
       // Validasi basic
-      if (!form.value.categoryId || !form.value.amount || !form.value.date) {
+      if (!form.value.category_id || !form.value.amount || !form.value.date) {
         return
       }
 
-      // Convert amount ke number
+      // Convert amount ke number dan format tanggal
       const formData = {
         ...form.value,
-        amount: Number(form.value.amount)
+        amount: Number(form.value.amount),
+        date: new Date(form.value.date).toISOString().split('T')[0] // Format tanggal sesuai API
       }
 
       emit('submit', formData)
