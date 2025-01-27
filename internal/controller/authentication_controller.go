@@ -15,10 +15,6 @@ type UserController struct {
 	UserService *service.UserService
 }
 
-func NewUserController(userService *service.UserService) *UserController {
-	return &UserController{UserService: userService}
-}
-
 func (c *UserController) RegisterHandler(ctx *gin.Context) {
 	var req request.RegisterRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
