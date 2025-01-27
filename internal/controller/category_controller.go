@@ -18,21 +18,13 @@ type CategoryController struct {
 func (c *CategoryController) GetAllCategoriesHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	categories, err := c.CategoryService.GetCategories(userID)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
@@ -48,37 +40,25 @@ func (c *CategoryController) GetAllCategoriesHandler(ctx *gin.Context) {
 func (c *CategoryController) GetCategoryIdHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid category ID",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid category ID", nil)
 		return
 	}
 
 	category, err := c.CategoryService.GetCategoryByID(uint(id), userID)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, response.ApiResponse{
 		ResponseStatus:  true,
-		ResponseMessage: "Get category success",
+		ResponseMessage: "Get category by id success",
 		Data:            category,
 	})
 }
@@ -86,31 +66,19 @@ func (c *CategoryController) GetCategoryIdHandler(ctx *gin.Context) {
 func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	var req request.CategoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid input",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid input", nil)
 		return
 	}
 
 	category, err := c.CategoryService.CreateCategory(req.Name, userID)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
@@ -124,41 +92,25 @@ func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid category ID",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid category ID", nil)
 		return
 	}
 
 	var req request.UpdateCategoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid input",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid input", nil)
 		return
 	}
 
 	category, err := c.CategoryService.UpdateCategory(uint(id), userID, req.Name)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
@@ -172,30 +124,18 @@ func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 func (c *CategoryController) DeleteCategoryHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid category ID",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid category ID", nil)
 		return
 	}
 
 	if err := c.CategoryService.DeleteCategory(uint(id), userID); err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 

@@ -4,11 +4,11 @@ import (
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
+	"go-manajemen-keuangan/internal/utility"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 type UserController struct {
@@ -18,30 +18,18 @@ type UserController struct {
 func (c *UserController) RegisterHandler(ctx *gin.Context) {
 	var req request.RegisterRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid input",
-			Data:            err.Error(),
-		})
+		utility.ValidationErrorResponse(ctx, err)
 		return
 	}
 
 	if req.Password != req.ConfirmPassword {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Password dan Confirm password do not match",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Password dan Confirm password do not match", nil)
 		return
 	}
 
 	err := c.UserService.RegisterUser(req.Name, req.Email, req.Username, req.Password)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
@@ -60,25 +48,30 @@ func (c *UserController) LoginHandler(ctx *gin.Context) {
 	var loginPayload request.LoginRequest
 
 	if err := ctx.ShouldBindJSON(&loginPayload); err != nil {
-		logrus.Errorf("Invalid input: %v", err) // debug
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid input",
-			Data:            err.Error(),
-		})
+		utility.ValidationErrorResponse(ctx, err)
 		return
 	}
 
-	logrus.Infof("Login attempt for: %s:", loginPayload.EmailOrUsername) // debug
+	// validasi input
+	if loginPayload.EmailOrUsername == "" || loginPayload.Password == "" {
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Email, username atau password is required", nil)
+		return
+	}
+
+	if len(loginPayload.Password) < 8 {
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Password must be at least 8 characters", nil)
+		return
+	}
 
 	// proses login
 	token, user, err := c.UserService.Login(loginPayload.EmailOrUsername, loginPayload.Password)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Email, username atau password salah",
-			Data:            nil,
-		})
+		if err.Error() == "invalid credentials" {
+			utility.ErrorResponse(ctx, http.StatusUnauthorized, "Invalid email/username or password", nil)
+			return
+		}
+
+		utility.ServerErrorResponse(ctx, err)
 		return
 	}
 

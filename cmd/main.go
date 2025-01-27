@@ -3,6 +3,7 @@ package main
 import (
 	"go-manajemen-keuangan/config"
 	"go-manajemen-keuangan/internal/router"
+	"go-manajemen-keuangan/internal/utility"
 	"go-manajemen-keuangan/middleware"
 	"log"
 	"os"
@@ -35,6 +36,8 @@ func main() {
 
 	// init gin router
 	r := gin.Default()
+	r.Use(utility.Recovery())
+	r.Use(middleware.LoggingMiddleware())
 	r.Use(middleware.CorsMiddleware())
 
 	// setup router

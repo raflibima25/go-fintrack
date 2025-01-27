@@ -21,22 +21,14 @@ type TransactionController struct {
 func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	var filter request.TransactionFilter
 	if err := ctx.ShouldBindQuery(&filter); err != nil {
 		logrus.Errorf("Error binding query params: %v", err)
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid filter parameters: " + err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid filter parameters: "+err.Error(), nil)
 		return
 	}
 
@@ -44,11 +36,7 @@ func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 
 	transactions, err := c.TransactionService.GetTransactionByUser(userID, filter)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
@@ -62,31 +50,19 @@ func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	var req request.CreateTransactionRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid input",
-			Data:            nil,
-		})
+		utility.ValidationErrorResponse(ctx, err)
 		return
 	}
 
 	transaction, err := c.TransactionService.CreateTransaction(userID, req)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
@@ -100,41 +76,25 @@ func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
 func (c *TransactionController) UpdateTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	transactionID, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid transaction ID",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid transaction ID", nil)
 		return
 	}
 
 	var req request.UpdateTransactionRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid input",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid input", nil)
 		return
 	}
 
 	transaction, err := c.TransactionService.UpdateTransaction(userID, uint(transactionID), req)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
@@ -148,30 +108,18 @@ func (c *TransactionController) UpdateTransactionHandler(ctx *gin.Context) {
 func (c *TransactionController) DeleteTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	transactionID, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid transaction ID",
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid transaction ID", nil)
 		return
 	}
 
 	if err := c.TransactionService.DeleteTransaction(userID, uint(transactionID)); err != nil {
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
@@ -186,33 +134,21 @@ func (c *TransactionController) ExportTransactionsExcelHandler(ctx *gin.Context)
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
 		logrus.Errorf("Error getting user ID: %v", err)
-		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	var filter request.TransactionFilter
 	if err := ctx.ShouldBindQuery(&filter); err != nil {
 		logrus.Errorf("Error binding query params: %v", err)
-		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Invalid filter parameters: " + err.Error(),
-			Data:            nil,
-		})
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid filter parameters: "+err.Error(), nil)
 		return
 	}
 
 	buffer, err := c.TransactionService.ExportTransactionsExcel(userID, filter)
 	if err != nil {
 		logrus.Errorf("Error exporting transactions: %v", err)
-		ctx.JSON(http.StatusInternalServerError, response.ApiResponse{
-			ResponseStatus:  false,
-			ResponseMessage: "Failed to export transactions: " + err.Error(),
-			Data:            nil,
-		})
+		utility.ServerErrorResponse(ctx, err)
 		return
 	}
 
