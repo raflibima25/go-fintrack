@@ -13,6 +13,23 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// @title 			Financial Management Application API
+// @version 		1.0
+// @description 	API for Financial Management Application
+// @temsOfService 	http://swagger.io/terms/
+
+// @contact.name 	Rafli Bima Pratandra
+// @contact.email 	raflibima1106@gmail.com
+
+// @license.name 	Apache 2.0
+// @license.url 	http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host 			localhost:8080
+// @BasePath 		/api
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	err := godotenv.Load()
 	if err != nil {

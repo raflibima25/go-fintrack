@@ -8,7 +8,11 @@ import (
 	"net/http"
 	"strings"
 
+	_ "go-manajemen-keuangan/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
@@ -24,6 +28,9 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	// init transaction
 	transactionService := &service.TransactionService{DB: db}
 	transactionController := &controller.TransactionController{TransactionService: transactionService}
+
+	// swagger enpoint
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// API routes group
 	api := r.Group("/api")

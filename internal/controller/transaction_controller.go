@@ -18,6 +18,23 @@ type TransactionController struct {
 	TransactionService *service.TransactionService
 }
 
+// GetAllTransactionsHandler godoc
+// @Summary 	Get all transactions
+// @Description Get all transactions with filter and pagination
+// @Tags 		transactions
+// @Accept 		json
+// @Produce 	json
+// @Security 	BearerAuth
+// @Param 		start_date 	query 	string 	false 	"Start date (YYYY-MM-DD)"
+// @Param 		end_date 	query 	string 	false 	"End date (YYYY-MM-DD)"
+// @Param 		category_id	query 	int 	false 	"Category ID"
+// @Param 		type 		query 	string 	false 	"Transaction type (income/expense)"
+// @Param 		page 		query 	int 	false 	"Page number"
+// @Param 		limit 		query 	int 	false 	"Limit per page"
+// @Success 	200 {object} response.ApiResponse{data=response.TransactionListResponse}
+// @Failure 	400 {object} response.ApiResponse
+// @Failure 	401 {object} response.ApiResponse
+// @Router 		/transaction [get]
 func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
@@ -47,6 +64,18 @@ func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 	})
 }
 
+// CreateTransactionHandler godoc
+// @Summary 	Get new transaction
+// @Description Get new transaction
+// @Tags 		transactions
+// @Accept 		json
+// @Produce 	json
+// @Security 	BearerAuth
+// @Param 		request body request.CreateTransactionRequest true "Transaction data"
+// @Success 	201 {object} response.ApiResponse{data=response.TransactionResponse}
+// @Failure 	400 {object} response.ApiResponse
+// @Failure 	401 {object} response.ApiResponse
+// @Router 		/transaction [post]
 func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
@@ -73,6 +102,19 @@ func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
 	})
 }
 
+// UpdateTransactionHandler godoc
+// @Summary 	Update transaction
+// @Description Update transaction by ID
+// @Tags 		transactions
+// @Accept 		json
+// @Produce 	json
+// @Security 	BearerAuth
+// @Param 		id path int true "Transaction ID"
+// @Param 		request body request.UpdateTransactionRequest true "Transaction data"
+// @Success 	201 {object} response.ApiResponse{data=response.TransactionResponse}
+// @Failure 	400 {object} response.ApiResponse
+// @Failure 	401 {object} response.ApiResponse
+// @Router 		/transaction/{id} [put]
 func (c *TransactionController) UpdateTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
@@ -105,6 +147,18 @@ func (c *TransactionController) UpdateTransactionHandler(ctx *gin.Context) {
 	})
 }
 
+// DeleteTransactionHandler godoc
+// @Summary 	Delete transaction
+// @Description Delete transaction by ID
+// @Tags 		transactions
+// @Accept 		json
+// @Produce 	json
+// @Security 	BearerAuth
+// @Param 		id path int true "Transaction ID"
+// @Success 	200 {object} response.ApiResponse
+// @Failure 	400 {object} response.ApiResponse
+// @Failure 	401 {object} response.ApiResponse
+// @Router 		/transaction/{id} [delete]
 func (c *TransactionController) DeleteTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {
@@ -130,6 +184,21 @@ func (c *TransactionController) DeleteTransactionHandler(ctx *gin.Context) {
 	})
 }
 
+// ExportTransactionsExcelHandler godoc
+// @Summary 	Export transactions to Excel
+// @Description Export transactions to Excel file
+// @Tags 		transactions
+// @Accept 		json
+// @Produce 	application/octet-stream
+// @Security 	BearerAuth
+// @Param 		start_date 	query 	string 	false 	"Start date (YYYY-MM-DD)"
+// @Param 		end_date 	query 	string 	false 	"End date (YYYY-MM-DD)"
+// @Param 		category_id	query 	int 	false 	"Category ID"
+// @Param 		type 		query 	string 	false 	"Transaction type (income/expense)"
+// @Success 	200 {file} file "Excel file download"
+// @Failure 	400 {object} response.ApiResponse
+// @Failure 	401 {object} response.ApiResponse
+// @Router 		/transaction/export [get]
 func (c *TransactionController) ExportTransactionsExcelHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {

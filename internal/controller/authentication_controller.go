@@ -15,6 +15,16 @@ type UserController struct {
 	UserService *service.UserService
 }
 
+// RegisterHandler godoc
+// @Summary 	Register new user
+// @Description Register new user with name, username, email, password and confirm password
+// @Tags 		auth
+// @Accept 		json
+// @Produce 	json
+// @Param 		request body request.RegisterRequest true "Register credentials"
+// @Success 	200 {object} response.ApiResponse
+// @Failure 	400 {object} response.ApiResponse
+// @Router 		/user/register [post]
 func (c *UserController) RegisterHandler(ctx *gin.Context) {
 	var req request.RegisterRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -44,6 +54,17 @@ func (c *UserController) RegisterHandler(ctx *gin.Context) {
 	})
 }
 
+// LoginHandler godoc
+// @Summary 	Login user
+// @Description Login user with email/username and password
+// @Tags 		auth
+// @Accept 		json
+// @Produce 	json
+// @Param 		request body request.LoginRequest true "Login credentials"
+// @Success 	200 {object} response.ApiResponse
+// @Failure 	400 {object} response.ApiResponse
+// @Failure 	401 {object} response.ApiResponse
+// @Router 		/user/login [post]
 func (c *UserController) LoginHandler(ctx *gin.Context) {
 	var loginPayload request.LoginRequest
 
