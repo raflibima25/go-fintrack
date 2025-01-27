@@ -1,14 +1,15 @@
 package main
 
 import (
+	"go-manajemen-keuangan/config"
+	"go-manajemen-keuangan/internal/router"
+	"go-manajemen-keuangan/middleware"
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
-	"go-manajemen-keuangan/internal/config"
-	"go-manajemen-keuangan/internal/middleware"
-	"go-manajemen-keuangan/internal/router"
-	"log"
-	"os"
 )
 
 func main() {

@@ -2,9 +2,9 @@ package router
 
 import (
 	"go-manajemen-keuangan/internal/controller"
-	"go-manajemen-keuangan/internal/middleware"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
+	"go-manajemen-keuangan/middleware"
 	"net/http"
 	"strings"
 
