@@ -31,8 +31,8 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	// API routes group
 	api := r.Group("/api")
 	{
-		api.GET("/health-check", func(c *gin.Context) {
-			c.JSON(http.StatusOK, response.ApiResponse{
+		api.GET("/health-check", func(ctx *gin.Context) {
+			ctx.JSON(http.StatusOK, response.ApiResponse{
 				ResponseStatus:  true,
 				ResponseMessage: "ok",
 				Data:            nil,

@@ -3,12 +3,12 @@ package utility
 import "github.com/gin-gonic/gin"
 
 func Recovery() gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(ctx *gin.Context) {
 		defer func() {
 			if r := recover(); r != nil {
-				c.Abort()
+				ctx.Abort()
 			}
 		}()
-		c.Next()
+		ctx.Next()
 	}
 }
