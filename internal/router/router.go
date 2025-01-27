@@ -4,6 +4,7 @@ import (
 	"go-manajemen-keuangan/internal/controller"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
+	"go-manajemen-keuangan/internal/utility"
 	"go-manajemen-keuangan/middleware"
 	"net/http"
 	"strings"
@@ -13,6 +14,8 @@ import (
 )
 
 func InitRoutes(r *gin.Engine, db *gorm.DB) {
+	r.Use(utility.Recovery())
+
 	// init user service dan controller
 	userService := &service.UserService{DB: db}
 	userController := &controller.UserController{UserService: userService}
