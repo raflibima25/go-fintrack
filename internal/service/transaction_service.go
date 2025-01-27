@@ -4,18 +4,28 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"github.com/xuri/excelize/v2"
 	"go-manajemen-keuangan/internal/payload/entity"
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
-	"gorm.io/gorm"
+	"go-manajemen-keuangan/internal/utility"
 	"math"
 	"time"
+
+	"github.com/sirupsen/logrus"
+	"github.com/xuri/excelize/v2"
+	"gorm.io/gorm"
 )
 
 type TransactionService struct {
-	DB *gorm.DB
+	DB              *gorm.DB
+	transactionUtil *utility.TransactionUtil
+}
+
+func NewTransactionService(db *gorm.DB) *TransactionService {
+	return &TransactionService{
+		DB:              db,
+		transactionUtil: utility.NewTransactionUtil(db),
+	}
 }
 
 func (s *TransactionService) GetTransactionByUser(userID uint, filter request.TransactionFilter) (*response.TransactionListResponse, error) {
@@ -23,60 +33,37 @@ func (s *TransactionService) GetTransactionByUser(userID uint, filter request.Tr
 
 	var transactions []entity.Transaction
 
-	query := s.DB.Preload("Category").Where("user_id = ?", userID)
+	baseQuery := s.DB.Where("user_id = ?", userID)
 
-	// filter tanggal
-	if filter.StartDate != "" {
-		startDate, err := time.Parse("2006-01-02", filter.StartDate)
-		if err == nil {
-			query = query.Where("date >= ?", startDate)
-		}
-	}
-
-	if filter.EndDate != "" {
-		endDate, err := time.Parse("2006-01-02", filter.EndDate)
-		if err == nil {
-			query = query.Where("date <= ?", endDate)
-		}
-	}
-
-	// filter kategori
-	if filter.CategoryID != 0 {
-		query = query.Where("category_id = ?", filter.CategoryID)
-	}
-
-	// filter tipe transaksi
-	if filter.Type != "" {
-		query = query.Where("type = ?", filter.Type)
-	}
+	filteredQuery := s.transactionUtil.BuildFilterQuery(baseQuery, filter)
 
 	// hitung total untuk pagination
 	var total int64
-	if err := query.Model(&entity.Transaction{}).Count(&total).Error; err != nil {
+	if err := filteredQuery.Model(&entity.Transaction{}).Count(&total).Error; err != nil {
+		logrus.Errorf("Failed to count transaction: %v", err)
 		return nil, errors.New("failed to count transaction")
+	}
+
+	summary, err := s.transactionUtil.CalculateTransactionSummary(filteredQuery, filter)
+	if err != nil {
+		logrus.Errorf("Failed to calculate transaction summary: %v", err)
+		return nil, err
 	}
 
 	// terapkan pagination
 	offset := (filter.Page - 1) * filter.Limit
-	query = query.Order("date DESC").
+	if err := filteredQuery.Preload("Category").
+		Order("date DESC").
 		Offset(offset).
-		Limit(filter.Limit)
-
-	if err := query.Find(&transactions).Error; err != nil {
+		Limit(filter.Limit).
+		Find(&transactions).Error; err != nil {
+		logrus.Errorf("Failed to get transactions: %v", err)
 		return nil, errors.New("failed to get transactions")
 	}
 
 	// transform ke response format
 	transactionResponses := make([]response.TransactionResponse, len(transactions))
-	var totalIncome, totalExpense float64
-
 	for i, tx := range transactions {
-		if tx.Type == "income" {
-			totalIncome += tx.Amount
-		} else {
-			totalExpense += tx.Amount
-		}
-
 		transactionResponses[i] = response.TransactionResponse{
 			ID:          tx.ID,
 			CategoryID:  tx.CategoryID,
@@ -92,11 +79,7 @@ func (s *TransactionService) GetTransactionByUser(userID uint, filter request.Tr
 
 	return &response.TransactionListResponse{
 		Transactions: transactionResponses,
-		Summary: response.TransactionSummary{
-			TotalIncome:  totalIncome,
-			TotalExpense: totalExpense,
-			Balance:      totalIncome - totalExpense,
-		},
+		Summary:      *summary,
 		Pagination: response.Pagination{
 			CurrentPage: filter.Page,
 			TotalPage:   int(math.Ceil(float64(total) / float64(filter.Limit))),

@@ -2,8 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
@@ -11,10 +9,17 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type TransactionController struct {
 	TransactionService *service.TransactionService
+}
+
+func NewTransactionController(transactionService *service.TransactionService) *TransactionController {
+	return &TransactionController{TransactionService: transactionService}
 }
 
 func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {

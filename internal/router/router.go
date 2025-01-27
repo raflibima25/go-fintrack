@@ -1,17 +1,19 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-manajemen-keuangan/internal/controller"
 	"go-manajemen-keuangan/internal/middleware"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
-	"gorm.io/gorm"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func InitRoutes(r *gin.Engine, db *gorm.DB) {
+
 	// init user service dan controller
 	userService := &service.UserService{DB: db}
 	userController := &controller.UserController{UserService: userService}
@@ -21,8 +23,8 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	categoryController := &controller.CategoryController{CategoryService: categoryService}
 
 	// init transaction
-	transactionService := &service.TransactionService{DB: db}
-	transactionController := &controller.TransactionController{TransactionService: transactionService}
+	transactionService := service.NewTransactionService(db)
+	transactionController := controller.NewTransactionController(transactionService)
 
 	// API routes group
 	api := r.Group("/api")
