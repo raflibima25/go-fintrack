@@ -18,10 +18,6 @@ type TransactionController struct {
 	TransactionService *service.TransactionService
 }
 
-func NewTransactionController(transactionService *service.TransactionService) *TransactionController {
-	return &TransactionController{TransactionService: transactionService}
-}
-
 func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
 	if err != nil {

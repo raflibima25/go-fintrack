@@ -1,17 +1,22 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type UserController struct {
 	UserService *service.UserService
+}
+
+func NewUserController(userService *service.UserService) *UserController {
+	return &UserController{UserService: userService}
 }
 
 func (c *UserController) RegisterHandler(ctx *gin.Context) {

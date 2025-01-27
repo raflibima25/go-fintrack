@@ -13,7 +13,6 @@ import (
 )
 
 func InitRoutes(r *gin.Engine, db *gorm.DB) {
-
 	// init user service dan controller
 	userService := &service.UserService{DB: db}
 	userController := &controller.UserController{UserService: userService}
@@ -23,8 +22,8 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	categoryController := &controller.CategoryController{CategoryService: categoryService}
 
 	// init transaction
-	transactionService := service.NewTransactionService(db)
-	transactionController := controller.NewTransactionController(transactionService)
+	transactionService := &service.TransactionService{DB: db}
+	transactionController := &controller.TransactionController{TransactionService: transactionService}
 
 	// API routes group
 	api := r.Group("/api")

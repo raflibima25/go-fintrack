@@ -14,10 +14,6 @@ type TransactionUtil struct {
 	DB *gorm.DB
 }
 
-func NewTransactionUtil(db *gorm.DB) *TransactionUtil {
-	return &TransactionUtil{DB: db}
-}
-
 func (u *TransactionUtil) BuildFilterQuery(query *gorm.DB, filter request.TransactionFilter) *gorm.DB {
 	newQuery := query
 
