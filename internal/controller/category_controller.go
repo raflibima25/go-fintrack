@@ -1,12 +1,14 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-manajemen-keuangan/internal/payload/request"
 	"go-manajemen-keuangan/internal/payload/response"
 	"go-manajemen-keuangan/internal/service"
+	"go-manajemen-keuangan/internal/utility"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type CategoryController struct {
@@ -14,7 +16,17 @@ type CategoryController struct {
 }
 
 func (c *CategoryController) GetAllCategoriesHandler(ctx *gin.Context) {
-	categories, err := c.CategoryService.GetCategories()
+	userID, err := utility.GetUserIDFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
+	categories, err := c.CategoryService.GetCategories(userID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
@@ -34,6 +46,16 @@ func (c *CategoryController) GetAllCategoriesHandler(ctx *gin.Context) {
 }
 
 func (c *CategoryController) GetCategoryIdHandler(ctx *gin.Context) {
+	userID, err := utility.GetUserIDFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
@@ -44,7 +66,7 @@ func (c *CategoryController) GetCategoryIdHandler(ctx *gin.Context) {
 		return
 	}
 
-	category, err := c.CategoryService.GetCategoryByID(uint(id))
+	category, err := c.CategoryService.GetCategoryByID(uint(id), userID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
@@ -62,6 +84,16 @@ func (c *CategoryController) GetCategoryIdHandler(ctx *gin.Context) {
 }
 
 func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
+	userID, err := utility.GetUserIDFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
 	var req request.CategoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
@@ -72,7 +104,7 @@ func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	category, err := c.CategoryService.CreateCategory(req.Name)
+	category, err := c.CategoryService.CreateCategory(req.Name, userID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
@@ -90,6 +122,16 @@ func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 }
 
 func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
+	userID, err := utility.GetUserIDFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
@@ -110,7 +152,7 @@ func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	category, err := c.CategoryService.UpdateCategory(uint(id), req.Name)
+	category, err := c.CategoryService.UpdateCategory(uint(id), userID, req.Name)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
@@ -128,6 +170,16 @@ func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 }
 
 func (c *CategoryController) DeleteCategoryHandler(ctx *gin.Context) {
+	userID, err := utility.GetUserIDFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ResponseStatus:  false,
+			ResponseMessage: err.Error(),
+			Data:            nil,
+		})
+		return
+	}
+
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
@@ -138,7 +190,7 @@ func (c *CategoryController) DeleteCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.CategoryService.DeleteCategory(uint(id)); err != nil {
+	if err := c.CategoryService.DeleteCategory(uint(id), userID); err != nil {
 		ctx.JSON(http.StatusBadRequest, response.ApiResponse{
 			ResponseStatus:  false,
 			ResponseMessage: err.Error(),
