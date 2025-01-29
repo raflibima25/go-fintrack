@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type UserController struct {
@@ -28,7 +29,17 @@ type UserController struct {
 func (c *UserController) RegisterHandler(ctx *gin.Context) {
 	var req request.RegisterRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		utility.ValidationErrorResponse(ctx, err)
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			formattedErrors := utility.FormatValidationError(validationErrors)
+			messages := make([]string, len(formattedErrors))
+			for i, err := range formattedErrors {
+				messages[i] = utility.GetReadableErrorMessage(err)
+			}
+			utility.ErrorResponse(ctx, http.StatusBadRequest, messages[0], messages)
+			return
+		}
+
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "Invalid input format", nil)
 		return
 	}
 
@@ -39,7 +50,14 @@ func (c *UserController) RegisterHandler(ctx *gin.Context) {
 
 	err := c.UserService.RegisterUser(req.Name, req.Email, req.Username, req.Password)
 	if err != nil {
-		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
+		switch err {
+		case service.ErrWeakPassword:
+			utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
+		case service.ErrUserExists:
+			utility.ErrorResponse(ctx, http.StatusConflict, err.Error(), nil)
+		default:
+			utility.ServerErrorResponse(ctx, err)
+		}
 		return
 	}
 
@@ -69,30 +87,29 @@ func (c *UserController) LoginHandler(ctx *gin.Context) {
 	var loginPayload request.LoginRequest
 
 	if err := ctx.ShouldBindJSON(&loginPayload); err != nil {
-		utility.ValidationErrorResponse(ctx, err)
-		return
-	}
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			formattedErrors := utility.FormatValidationError(validationErrors)
+			messages := make([]string, len(formattedErrors))
+			for i, err := range formattedErrors {
+				messages[i] = utility.GetReadableErrorMessage(err)
+			}
+			utility.ErrorResponse(ctx, http.StatusBadRequest, messages[0], messages)
+			return
+		}
 
-	// validasi input
-	if loginPayload.EmailOrUsername == "" || loginPayload.Password == "" {
-		utility.ErrorResponse(ctx, http.StatusBadRequest, "Email, username atau password is required", nil)
-		return
-	}
-
-	if len(loginPayload.Password) < 8 {
-		utility.ErrorResponse(ctx, http.StatusBadRequest, "Password must be at least 8 characters", nil)
+		utility.ErrorResponse(ctx, http.StatusBadRequest, "invalid input format", nil)
 		return
 	}
 
 	// proses login
 	token, user, err := c.UserService.Login(loginPayload.EmailOrUsername, loginPayload.Password)
 	if err != nil {
-		if err.Error() == "invalid credentials" {
+		switch err {
+		case service.ErrInvalidCredentials:
 			utility.ErrorResponse(ctx, http.StatusUnauthorized, "Invalid email/username or password", nil)
-			return
+		default:
+			utility.ServerErrorResponse(ctx, err)
 		}
-
-		utility.ServerErrorResponse(ctx, err)
 		return
 	}
 
