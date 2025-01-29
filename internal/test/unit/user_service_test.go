@@ -59,7 +59,7 @@ func TestRegisterUser(t *testing.T) {
 			setupMock: func(mock sqlmock.Sqlmock) {
 				// Check existing user - perhatikan GORM menambahkan LIMIT 1
 				mock.ExpectQuery("SELECT (.+) FROM `users`").
-					WithArgs("test@example.com", "testUser", 1). // tambahkan argument LIMIT
+					WithArgs("test@example.com", "testUser", 1).
 					WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 				// Expect insert with all fields
