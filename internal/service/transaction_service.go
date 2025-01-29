@@ -21,6 +21,13 @@ type TransactionService struct {
 	transactionUtil *utility.TransactionUtil
 }
 
+func NewTransactionService(db *gorm.DB) *TransactionService {
+	return &TransactionService{
+		DB:              db,
+		transactionUtil: &utility.TransactionUtil{DB: db},
+	}
+}
+
 func (s *TransactionService) GetTransactionByUser(userID uint, filter request.TransactionFilter) (*response.TransactionListResponse, error) {
 	logrus.Infof("Applying filter: %+v", filter) // debug
 
