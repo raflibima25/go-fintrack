@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"go-manajemen-keuangan/internal/payload/request"
-	"go-manajemen-keuangan/internal/payload/response"
-	"go-manajemen-keuangan/internal/service"
-	"go-manajemen-keuangan/internal/utility"
+	"go-fintrack/internal/payload/request"
+	"go-fintrack/internal/payload/response"
+	"go-fintrack/internal/service"
+	"go-fintrack/internal/utility"
 	"net/http"
 	"time"
 

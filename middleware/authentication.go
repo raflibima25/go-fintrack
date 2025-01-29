@@ -1,13 +1,14 @@
 package middleware
 
 import (
+	"go-fintrack/internal/payload/response"
+	"go-fintrack/internal/utility"
+	"net/http"
+	"strings"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"go-manajemen-keuangan/internal/payload/response"
-	"go-manajemen-keuangan/internal/utility"
-	"net/http"
-	"strings"
 )
 
 func Authentication() gin.HandlerFunc {

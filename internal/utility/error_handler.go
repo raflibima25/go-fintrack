@@ -1,7 +1,7 @@
 package utility
 
 import (
-	"go-manajemen-keuangan/internal/payload/response"
+	"go-fintrack/internal/payload/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

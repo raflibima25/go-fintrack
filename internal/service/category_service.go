@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"go-manajemen-keuangan/internal/payload/entity"
-	"go-manajemen-keuangan/internal/payload/response"
+	"go-fintrack/internal/payload/entity"
+	"go-fintrack/internal/payload/response"
 	"strings"
 	"time"
 

@@ -1,4 +1,4 @@
-module go-manajemen-keuangan
+module go-fintrack
 
 go 1.23.1
 

@@ -2,9 +2,9 @@ package unit
 
 import (
 	"errors"
-	"go-manajemen-keuangan/internal/payload/entity"
-	"go-manajemen-keuangan/internal/service"
-	"go-manajemen-keuangan/internal/utility"
+	"go-fintrack/internal/payload/entity"
+	"go-fintrack/internal/service"
+	"go-fintrack/internal/utility"
 	"testing"
 	"time"
 

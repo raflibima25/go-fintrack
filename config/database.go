@@ -2,11 +2,12 @@ package config
 
 import (
 	"fmt"
+	"go-fintrack/internal/payload/entity"
+	"os"
+
 	"github.com/sirupsen/logrus"
-	"go-manajemen-keuangan/internal/payload/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"os"
 )
 
 func ConnectDB() *gorm.DB {

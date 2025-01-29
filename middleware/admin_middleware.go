@@ -1,10 +1,11 @@
 package middleware
 
 import (
+	"go-fintrack/internal/payload/response"
+	"net/http"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"go-manajemen-keuangan/internal/payload/response"
-	"net/http"
 )
 
 func AdminOnly() gin.HandlerFunc {

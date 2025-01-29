@@ -1,14 +1,14 @@
 package router
 
 import (
-	"go-manajemen-keuangan/internal/controller"
-	"go-manajemen-keuangan/internal/payload/response"
-	"go-manajemen-keuangan/internal/service"
-	"go-manajemen-keuangan/middleware"
+	"go-fintrack/internal/controller"
+	"go-fintrack/internal/payload/response"
+	"go-fintrack/internal/service"
+	"go-fintrack/middleware"
 	"net/http"
 	"strings"
 
-	_ "go-manajemen-keuangan/docs"
+	_ "go-fintrack/docs"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

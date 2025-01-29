@@ -2,9 +2,9 @@ package utility
 
 import (
 	"fmt"
-	"go-manajemen-keuangan/internal/payload/entity"
-	"go-manajemen-keuangan/internal/payload/request"
-	"go-manajemen-keuangan/internal/payload/response"
+	"go-fintrack/internal/payload/entity"
+	"go-fintrack/internal/payload/request"
+	"go-fintrack/internal/payload/response"
 	"time"
 
 	"gorm.io/gorm"

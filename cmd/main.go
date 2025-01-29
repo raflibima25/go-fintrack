@@ -1,10 +1,10 @@
 package main
 
 import (
-	"go-manajemen-keuangan/config"
-	"go-manajemen-keuangan/internal/router"
-	"go-manajemen-keuangan/internal/utility"
-	"go-manajemen-keuangan/middleware"
+	"go-fintrack/config"
+	"go-fintrack/internal/router"
+	"go-fintrack/internal/utility"
+	"go-fintrack/middleware"
 	"log"
 	"os"
 

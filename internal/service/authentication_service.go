@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"go-manajemen-keuangan/internal/payload/entity"
-	"go-manajemen-keuangan/internal/utility"
+	"go-fintrack/internal/payload/entity"
+	"go-fintrack/internal/utility"
 
 	"gorm.io/gorm"
 )
