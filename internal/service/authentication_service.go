@@ -45,11 +45,11 @@ func (s *UserService) Login(emailOrUsername, password string) (string, *entity.U
 	var user entity.User
 
 	if err := s.DB.Where("email = ? OR username = ?", emailOrUsername, emailOrUsername).First(&user).Error; err != nil {
-		return "", nil, errors.New("email, username atau password salah")
+		return "", nil, errors.New("wrong email, username or password")
 	}
 
 	if err := utility.CompareHashAndPassword(user.Password, password); err != nil {
-		return "", nil, errors.New("email, username atau password salah")
+		return "", nil, errors.New("wrong email, username or password")
 	}
 
 	// generate jwt
