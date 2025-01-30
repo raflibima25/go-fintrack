@@ -111,7 +111,7 @@ func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	category, err := c.CategoryService.CreateCategory(req.Name, userID)
+	category, err := c.CategoryService.CreateCategory(&req, userID)
 	if err != nil {
 		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -156,7 +156,7 @@ func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	category, err := c.CategoryService.UpdateCategory(uint(id), userID, req.Name)
+	category, err := c.CategoryService.UpdateCategory(uint(id), userID, &req)
 	if err != nil {
 		utility.ErrorResponse(ctx, http.StatusBadRequest, err.Error(), nil)
 		return

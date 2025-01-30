@@ -5,6 +5,7 @@ import (
 	"go-fintrack/internal/payload/entity"
 	"go-fintrack/internal/service"
 	"go-fintrack/internal/utility"
+	"os"
 	"testing"
 	"time"
 
@@ -16,6 +17,9 @@ import (
 )
 
 func setupTestDB(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
+	// Set JWT secret untuk testing
+	os.Setenv("JWT_SECRET", "test-secret-key")
+
 	// Create SQL mock
 	sqlDB, mock, err := sqlmock.New()
 	if err != nil {
@@ -55,7 +59,7 @@ func TestRegisterUser(t *testing.T) {
 			inputName:     "Test User",
 			inputEmail:    "test@example.com",
 			inputUsername: "testUser",
-			inputPassword: "password123",
+			inputPassword: "Password123",
 			setupMock: func(mock sqlmock.Sqlmock) {
 				// Check existing user - perhatikan GORM menambahkan LIMIT 1
 				mock.ExpectQuery("SELECT (.+) FROM `users`").
@@ -85,14 +89,14 @@ func TestRegisterUser(t *testing.T) {
 			inputName:     "Test User",
 			inputEmail:    "existing@example.com",
 			inputUsername: "existingUser",
-			inputPassword: "password123",
+			inputPassword: "Password123",
 			setupMock: func(mock sqlmock.Sqlmock) {
 				mock.ExpectQuery("SELECT (.+) FROM `users`").
 					WithArgs("existing@example.com", "existingUser", 1).
 					WillReturnRows(sqlmock.NewRows([]string{"id", "name", "email", "username"}).
 						AddRow(1, "Test User", "existing@example.com", "existingUser"))
 			},
-			expectedError: errors.New("email or username already exists"),
+			expectedError: errors.New("user with this email or username already exists"),
 		},
 	}
 
@@ -130,7 +134,12 @@ func TestRegisterUser(t *testing.T) {
 
 func TestLogin(t *testing.T) {
 	db, mock := setupTestDB(t)
-	hashedPassword, _ := utility.HashPassword("password123")
+
+	defer func() {
+		os.Unsetenv("JWT_SECRET")
+	}()
+
+	hashedPassword, _ := utility.HashPassword("Password123")
 
 	tests := []struct {
 		name            string
@@ -143,13 +152,19 @@ func TestLogin(t *testing.T) {
 		{
 			name:            "Success Login with Email",
 			inputCredential: "test@example.com",
-			inputPassword:   "password123",
+			inputPassword:   "Password123",
 			setupMock: func(mock sqlmock.Sqlmock) {
-				columns := []string{"id", "created_at", "updated_at", "deleted_at", "name", "email", "username", "password", "is_admin"}
-				mock.ExpectQuery("SELECT (.+) FROM `users`").
-					WithArgs("test@example.com", "test@example.com", 1).
-					WillReturnRows(sqlmock.NewRows(columns).
-						AddRow(1, time.Now(), time.Now(), nil, "Test User", "test@example.com", "testUser", hashedPassword, false))
+				// Tambahkan regex untuk query yang lebih spesifik
+				mock.ExpectQuery(`^SELECT \* FROM `+"`users`"+` WHERE .+$`).
+					WithArgs("test@example.com", "test@example.com").
+					WillReturnRows(sqlmock.NewRows([]string{
+						"id", "created_at", "updated_at", "deleted_at",
+						"name", "email", "username", "password", "is_admin",
+					}).AddRow(
+						1, time.Now(), time.Now(), nil,
+						"Test User", "test@example.com", "testUser",
+						hashedPassword, false,
+					))
 			},
 			expectedUser: &entity.User{
 				Model: gorm.Model{
@@ -166,14 +181,33 @@ func TestLogin(t *testing.T) {
 		{
 			name:            "Invalid Credentials",
 			inputCredential: "wrong@example.com",
-			inputPassword:   "wrongpassword",
+			inputPassword:   "Password123",
 			setupMock: func(mock sqlmock.Sqlmock) {
-				mock.ExpectQuery("SELECT (.+) FROM `users`").
-					WithArgs("wrong@example.com", "wrong@example.com", 1).
-					WillReturnRows(sqlmock.NewRows([]string{"id"}))
+				mock.ExpectQuery(`^SELECT \* FROM `+"`users`"+` WHERE .+$`).
+					WithArgs("wrong@example.com", "wrong@example.com").
+					WillReturnError(gorm.ErrRecordNotFound)
 			},
 			expectedUser:  nil,
-			expectedError: errors.New("wrong email, username or password"),
+			expectedError: service.ErrInvalidCredentials,
+		},
+		{
+			name:            "Invalid Password",
+			inputCredential: "test@example.com",
+			inputPassword:   "WrongPass123",
+			setupMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(`^SELECT \* FROM `+"`users`"+` WHERE .+$`).
+					WithArgs("test@example.com", "test@example.com").
+					WillReturnRows(sqlmock.NewRows([]string{
+						"id", "created_at", "updated_at", "deleted_at",
+						"name", "email", "username", "password", "is_admin",
+					}).AddRow(
+						1, time.Now(), time.Now(), nil,
+						"Test User", "test@example.com", "testUser",
+						hashedPassword, false,
+					))
+			},
+			expectedUser:  nil,
+			expectedError: service.ErrInvalidCredentials,
 		},
 	}
 
@@ -191,15 +225,22 @@ func TestLogin(t *testing.T) {
 
 			// Assert
 			if tt.expectedError != nil {
-				assert.EqualError(t, err, tt.expectedError.Error())
+				if tt.expectedError == service.ErrInvalidCredentials {
+					assert.ErrorIs(t, err, service.ErrInvalidCredentials)
+				} else {
+					assert.EqualError(t, err, tt.expectedError.Error())
+				}
 				assert.Empty(t, token)
 				assert.Nil(t, user)
 			} else {
-				assert.NoError(t, err)
-				assert.NotEmpty(t, token)
+				assert.NoError(t, err, "Should not have error")
+				assert.NotEmpty(t, token, "Token should not be empty")
 				if tt.expectedUser != nil {
+					assert.NotNil(t, user, "User should not be nil")
 					assert.Equal(t, tt.expectedUser.ID, user.ID)
+					assert.Equal(t, tt.expectedUser.Email, user.Email)
 					assert.Equal(t, tt.expectedUser.Username, user.Username)
+					assert.Equal(t, tt.expectedUser.Password, user.Password)
 					assert.Equal(t, tt.expectedUser.IsAdmin, user.IsAdmin)
 				}
 			}

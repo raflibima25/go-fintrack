@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"go-fintrack/internal/payload/entity"
+	"go-fintrack/internal/payload/request"
 	"go-fintrack/internal/payload/response"
 	"strings"
 	"time"
@@ -17,6 +18,9 @@ type CategoryService struct {
 func (s *CategoryService) GetCategories(userID uint) ([]response.CategoryResponse, error) {
 	var categories []entity.Category
 
+	var totalTransactions int64
+	s.DB.Model(&entity.Transaction{}).Where("user_id = ?", userID).Count(&totalTransactions)
+
 	if err := s.DB.Where("user_id = ?", userID).Find(&categories).Error; err != nil {
 		return nil, errors.New("failed to get all category")
 	}
@@ -25,6 +29,16 @@ func (s *CategoryService) GetCategories(userID uint) ([]response.CategoryRespons
 	categoryResponse := make([]response.CategoryResponse, len(categories))
 
 	for i, category := range categories {
+		// hitung usage count
+		var usageCount int64
+		s.DB.Model(&entity.Transaction{}).Where("category_id = ?", category.ID).Count(&usageCount)
+
+		// hitung usage percentage
+		var usagePercentage float64
+		if totalTransactions > 0 {
+			usagePercentage = float64(usageCount) / float64(totalTransactions) * 100
+		}
+
 		deletedAt := category.DeletedAt.Time
 		var deletedAtPtr time.Time
 		if category.DeletedAt.Valid {
@@ -32,12 +46,16 @@ func (s *CategoryService) GetCategories(userID uint) ([]response.CategoryRespons
 		}
 
 		categoryResponse[i] = response.CategoryResponse{
-			ID:        category.ID,
-			Name:      category.Name,
-			UserID:    category.UserID,
-			CreatedAt: category.CreatedAt,
-			UpdatedAt: category.UpdatedAt,
-			DeletedAt: deletedAtPtr,
+			ID:              category.ID,
+			Name:            category.Name,
+			Color:           category.Color,
+			IconColor:       category.IconColor,
+			UsageCount:      usageCount,
+			UsagePercentage: usagePercentage,
+			UserID:          category.UserID,
+			CreatedAt:       category.CreatedAt,
+			UpdatedAt:       category.UpdatedAt,
+			DeletedAt:       deletedAtPtr,
 		}
 	}
 
@@ -69,8 +87,8 @@ func (s *CategoryService) GetCategoryByID(categoryID uint, userID uint) (*respon
 	}, nil
 }
 
-func (s *CategoryService) CreateCategory(name string, userID uint) (*response.CategoryResponse, error) {
-	nameToLower := strings.ToLower(strings.TrimSpace(name))
+func (s *CategoryService) CreateCategory(req *request.CategoryRequest, userID uint) (*response.CategoryResponse, error) {
+	nameToLower := strings.ToLower(strings.TrimSpace(req.Name))
 
 	// check existing
 	var existingCategory entity.Category
@@ -80,8 +98,10 @@ func (s *CategoryService) CreateCategory(name string, userID uint) (*response.Ca
 
 	// create category
 	newCategory := entity.Category{
-		UserID: userID,
-		Name:   nameToLower,
+		UserID:    userID,
+		Name:      nameToLower,
+		Color:     req.Color,
+		IconColor: req.IconColor,
 	}
 
 	if err := s.DB.Create(&newCategory).Error; err != nil {
@@ -91,14 +111,16 @@ func (s *CategoryService) CreateCategory(name string, userID uint) (*response.Ca
 	return &response.CategoryResponse{
 		ID:        newCategory.ID,
 		Name:      newCategory.Name,
+		Color:     newCategory.Color,
+		IconColor: newCategory.IconColor,
 		UserID:    newCategory.UserID,
 		CreatedAt: newCategory.CreatedAt,
 		UpdatedAt: newCategory.UpdatedAt,
 	}, nil
 }
 
-func (s *CategoryService) UpdateCategory(categoryID uint, userID uint, name string) (*response.CategoryResponse, error) {
-	nameToLower := strings.ToLower(strings.TrimSpace(name))
+func (s *CategoryService) UpdateCategory(categoryID uint, userID uint, req *request.UpdateCategoryRequest) (*response.CategoryResponse, error) {
+	nameToLower := strings.ToLower(strings.TrimSpace(req.Name))
 
 	// check category
 	var category entity.Category
@@ -117,16 +139,40 @@ func (s *CategoryService) UpdateCategory(categoryID uint, userID uint, name stri
 
 	// update category
 	category.Name = nameToLower
+	if req.Color != "" {
+		category.Color = req.Color
+	}
+
+	if req.IconColor != "" {
+		category.IconColor = req.IconColor
+	}
+
 	if err := s.DB.Save(&category).Error; err != nil {
 		return nil, errors.New("failed to update category")
 	}
 
+	// Hitung usage count dan percentage untuk response
+	var totalTransactions int64
+	s.DB.Model(&entity.Transaction{}).Where("user_id = ?", userID).Count(&totalTransactions)
+
+	var usageCount int64
+	s.DB.Model(&entity.Transaction{}).Where("category_id = ?", category.ID).Count(&usageCount)
+
+	var usagePercentage float64
+	if totalTransactions > 0 {
+		usagePercentage = float64(usageCount) / float64(totalTransactions) * 100
+	}
+
 	return &response.CategoryResponse{
-		ID:        category.ID,
-		Name:      category.Name,
-		UserID:    category.UserID,
-		CreatedAt: category.CreatedAt,
-		UpdatedAt: category.UpdatedAt,
+		ID:              category.ID,
+		Name:            category.Name,
+		Color:           category.Color,
+		IconColor:       category.IconColor,
+		UsageCount:      usageCount,
+		UsagePercentage: usagePercentage,
+		UserID:          category.UserID,
+		CreatedAt:       category.CreatedAt,
+		UpdatedAt:       category.UpdatedAt,
 	}, nil
 }
 

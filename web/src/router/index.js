@@ -7,6 +7,7 @@ const DashboardUser = () => import('@/views/DashboardUser.vue')
 const DashboardAdmin = () => import('@/views/DashboardAdmin.vue')
 const PageNotFound = () => import('@/views/PageNotFound.vue')
 const TransactionList = () => import('@/views/TransactionList.vue')
+const CategoryList = () => import('@/views/CategoryList.vue')
 
 const routes = [
   {
@@ -49,12 +50,22 @@ const routes = [
   },
   {
     path: '/transactions',
-    name: 'transactions',
+    name: 'TransactionsUser',
     component: TransactionList,
     meta: {
       requiresAuth: true,
       role: 'user',
       title: 'Transactions'
+    }
+  },
+  {
+    path: '/categories',
+    name: 'CategoriesUser',
+    component: CategoryList,
+    meta: {
+      requiresAuth: true,
+      role: 'user',
+      title: 'Categories'
     }
   },
   {
