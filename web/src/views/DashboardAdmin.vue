@@ -20,39 +20,23 @@
 </template>
 
 <script>
+import { onMounted } from 'vue';
+import { useAuth } from '../composables/useAuth';
+
 export default {
   name: 'DashboardAdmin',
 
-  created() {
-    this.checkAuth();
-  },
+  setup() {
+    const { checkAuth, logout } = useAuth();
 
-  methods: {
-    checkAuth() {
-      const token = localStorage.getItem('token');
-      const isAdmin = localStorage.getItem('isAdmin') === 'true';
+    onMounted(() => {
+      checkAuth('admin');
+    });
 
-      if (!token) {
-        this.$router.push('/login');
-        return;
-      }
-
-      if (!isAdmin) {
-        this.$router.push('/dashboard');
-        return;
-      }
-    },
-
-    async logout() {
-      try {
-        localStorage.removeItem("token");
-        localStorage.removeItem("isAdmin")
-        this.$router.push("/login");
-      } catch (error) {
-        console.log('Logout error:', error)
-      }
-    },
-  },
+    return {
+      logout
+    };
+  }
 };
 </script>
 

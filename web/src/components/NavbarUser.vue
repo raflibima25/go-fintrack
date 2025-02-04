@@ -129,47 +129,40 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useAuth } from '../composables/useAuth';
 
 export default {
-  name: 'MainNavbar',
+  name: 'NavbarUser',
 
   setup() {
-    const router = useRouter()
+    const { userName, logout } = useAuth()
     const showMobileMenu = ref(false)
     const showUserMenu = ref(false)
 
-    // Ambil data user dari localStorage atau state management
-    const userName = computed(() => {
-      // Implementasikan pengambilan nama user
-      return 'John Doe'
-    })
-
-    const userInitials = computed(() => {
-      return userName.value
+    const displayInitials = computed(() => {
+      const name = userName.value || 'User'
+      return name
         .split(' ')
-        .map(n => n[0])
+        .map((n) => n[0])
         .join('')
         .toUpperCase()
     })
 
+    const displayName = computed(() => {
+      return userName.value || 'User'
+    })
+
     const handleLogout = async () => {
-      try {
-        // Implementasikan logout logic
-        localStorage.removeItem('token')
-        router.push('/login')
-      } catch (error) {
-        console.error('Logout error:', error)
-      }
+      await logout()
     }
 
     return {
       showMobileMenu,
       showUserMenu,
-      userName,
-      userInitials,
-      handleLogout
+      userName: displayName,
+      userInitials: displayInitials,
+      handleLogout,
     }
   }
 }

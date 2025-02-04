@@ -20,33 +20,25 @@
 </template>
 
 <script>
+import { onMounted } from "vue";
+import { useAuth } from "../composables/useAuth";
 import TransactionList from "@/views/TransactionList.vue";
 
 export default {
   name: 'DashboardUser',
   components: {TransactionList},
 
-  created() {
-    this.checkAuth();
-  },
+  setup() {
+    const { checkAuth, logout } = useAuth()
 
-  methods: {
-    checkAuth() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        this.$router.push('/login')
-      }
-    },
+    onMounted(() => {
+      checkAuth('user')
+    })
 
-    async logout() {
-      try {
-        localStorage.removeItem("token");
-        this.$router.push("/login");
-      } catch (error) {
-        console.log('Logout error:', error)
-      }
-    },
-  },
+    return {
+      logout
+    }
+  }
 };
 </script>
 
