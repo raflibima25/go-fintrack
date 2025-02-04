@@ -84,10 +84,10 @@
           <div class="flex items-center sm:hidden">
             <button
               @click="showMobileMenu = !showMobileMenu"
-              class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              class="inline-flex items-center justify-center p-2 rounded-md text-blue-500 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
             >
-              <i-lucide-menu v-if="!showMobileMenu" class="block h-6 w-6" />
-              <i-lucide-x v-else class="block h-6 w-6" />
+              <MenuIcon v-if="!showMobileMenu" class="block h-6 w-6" />
+              <X v-else class="block h-6 w-6" />
             </button>
           </div>
         </div>
@@ -131,9 +131,15 @@
 <script>
 import { computed, ref } from 'vue'
 import { useAuth } from '../composables/useAuth';
+import { Menu as MenuIcon, X } from 'lucide-vue-next'
 
 export default {
   name: 'NavbarUser',
+
+  components: {
+    MenuIcon,
+    X
+  },
 
   setup() {
     const { userName, logout } = useAuth()
