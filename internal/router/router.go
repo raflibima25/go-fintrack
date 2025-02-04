@@ -44,7 +44,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 		})
 
 		// user endpoint
-		userRouter := api.Group("/user")
+		userRouter := api.Group("/auth")
 		{
 			userRouter.POST("/register", userController.RegisterHandler)
 			userRouter.POST("/login", userController.LoginHandler)

@@ -25,7 +25,7 @@ type UserController struct {
 // @Param 		request body request.RegisterRequest true "Register credentials"
 // @Success 	200 {object} response.ApiResponse
 // @Failure 	400 {object} response.ApiResponse
-// @Router 		/user/register [post]
+// @Router 		/auth/register [post]
 func (c *UserController) RegisterHandler(ctx *gin.Context) {
 	var req request.RegisterRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -82,7 +82,7 @@ func (c *UserController) RegisterHandler(ctx *gin.Context) {
 // @Success 	200 {object} response.ApiResponse
 // @Failure 	400 {object} response.ApiResponse
 // @Failure 	401 {object} response.ApiResponse
-// @Router 		/user/login [post]
+// @Router 		/auth/login [post]
 func (c *UserController) LoginHandler(ctx *gin.Context) {
 	var loginPayload request.LoginRequest
 

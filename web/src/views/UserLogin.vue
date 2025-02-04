@@ -61,7 +61,7 @@ export default {
   methods: {
     async login() {
       try {
-        const response = await apiClient.post("/user/login", {
+        const response = await apiClient.post("/auth/login", {
           email_or_username: this.identifier, // email_or_username dan password merupakan field json backend
           password: this.password,
         });

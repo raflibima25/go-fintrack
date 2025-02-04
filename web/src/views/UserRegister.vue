@@ -113,7 +113,7 @@ export default {
   methods: {
     async register() {
       try {
-        const response = await apiClient.post("/user/register", {
+        const response = await apiClient.post("/auth/register", {
           name: this.name,
           email: this.email,
           username: this.username,
