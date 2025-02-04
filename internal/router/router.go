@@ -78,6 +78,12 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 			transactionRouter.DELETE("/:id", transactionController.DeleteTransactionHandler)
 			transactionRouter.GET("/export", transactionController.ExportTransactionsExcelHandler)
 		}
+
+		chatRouter := api.Group("/chat")
+		chatRouter.Use(middleware.Authentication())
+		{
+			chatRouter.POST("/stream", controller.StreamChat)
+		}
 	}
 
 	// serve frontend static file
