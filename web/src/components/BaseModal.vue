@@ -1,4 +1,18 @@
-# BaseModal.vue
+<script>
+export default {
+  name: 'BaseModal',
+
+  props: {
+    show: {
+      type: Boolean,
+      required: true
+    }
+  },
+
+  emits: ['close']
+}
+</script>
+
 <template>
   <Transition name="modal">
     <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto">
@@ -25,21 +39,6 @@
     </div>
   </Transition>
 </template>
-
-<script>
-export default {
-  name: 'BaseModal',
-
-  props: {
-    show: {
-      type: Boolean,
-      required: true
-    }
-  },
-
-  emits: ['close']
-}
-</script>
 
 <style scoped>
 .modal-enter-active,

@@ -21,6 +21,10 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	userService := &service.UserService{DB: db}
 	userController := &controller.UserController{UserService: userService}
 
+	// init dashboard
+	dashboardService := service.NewDashboardService(db)
+	dashboardController := controller.NewDashboardController(dashboardService)
+
 	// init category
 	categoryService := &service.CategoryService{DB: db}
 	categoryController := &controller.CategoryController{CategoryService: categoryService}
@@ -43,13 +47,6 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 			})
 		})
 
-		// user endpoint
-		userRouter := api.Group("/auth")
-		{
-			userRouter.POST("/register", userController.RegisterHandler)
-			userRouter.POST("/login", userController.LoginHandler)
-		}
-
 		// admin endpoint
 		adminRouter := api.Group("/admin")
 		adminRouter.Use(middleware.Authentication(), middleware.AdminOnly())
@@ -57,15 +54,18 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 			//	router admin
 		}
 
-		// category endpoint
-		categoryRouter := api.Group("/category")
-		categoryRouter.Use(middleware.Authentication())
+		// auth endpoint
+		userRouter := api.Group("/auth")
 		{
-			categoryRouter.GET("", categoryController.GetAllCategoriesHandler)
-			categoryRouter.GET("/:id", categoryController.GetCategoryIdHandler)
-			categoryRouter.POST("", categoryController.CreateCategoryHandler)
-			categoryRouter.PUT("/:id", categoryController.UpdateCategoryHandler)
-			categoryRouter.DELETE("/:id", categoryController.DeleteCategoryHandler)
+			userRouter.POST("/register", userController.RegisterHandler)
+			userRouter.POST("/login", userController.LoginHandler)
+		}
+
+		// dashboard endpoint
+		dashboardRouter := api.Group("/dashboard")
+		dashboardRouter.Use(middleware.Authentication())
+		{
+			dashboardRouter.GET("/overview", dashboardController.GetFinancialOverviewHandler)
 		}
 
 		// transaction endpoint
@@ -77,6 +77,17 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 			transactionRouter.PUT("/:id", transactionController.UpdateTransactionHandler)
 			transactionRouter.DELETE("/:id", transactionController.DeleteTransactionHandler)
 			transactionRouter.GET("/export", transactionController.ExportTransactionsExcelHandler)
+		}
+
+		// category endpoint
+		categoryRouter := api.Group("/category")
+		categoryRouter.Use(middleware.Authentication())
+		{
+			categoryRouter.GET("", categoryController.GetAllCategoriesHandler)
+			categoryRouter.GET("/:id", categoryController.GetCategoryIdHandler)
+			categoryRouter.POST("", categoryController.CreateCategoryHandler)
+			categoryRouter.PUT("/:id", categoryController.UpdateCategoryHandler)
+			categoryRouter.DELETE("/:id", categoryController.DeleteCategoryHandler)
 		}
 
 		chatRouter := api.Group("/chat")
