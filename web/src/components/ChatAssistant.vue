@@ -68,7 +68,7 @@ const parseStreamChunk = (chunk) => {
       // Remove 'data:' prefix and trim whitespace
       let data = line.slice(5).trim()
       if (data) {
-        message += data + ' '  // Add space after each data chunk
+        message += data + ' '
       }
     }
   }
@@ -171,8 +171,8 @@ onMounted(() => {
       <!-- Welcome Message -->
       <div v-if="messages.length === 0" class="flex justify-center items-center h-full">
         <div class="text-center text-slate-500">
-          <p class="text-lg font-medium mb-2">👋 Selamat datang!</p>
-          <p class="text-sm">Saya siap membantu Anda. Silakan ajukan pertanyaan.</p>
+          <p class="text-lg font-medium mb-2">👋 Welcome!</p>
+          <p class="text-sm">I am here to help you. Please feel free to ask questions.</p>
         </div>
       </div>
 
@@ -222,7 +222,7 @@ onMounted(() => {
           v-model="newMessage"
           @keyup.enter="sendMessage"
           type="text"
-          placeholder="Ketik pesan Anda di sini..."
+          placeholder="Type your message here..."
           :disabled="isStreaming"
           class="flex-1 px-4 py-2 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-50 disabled:cursor-not-allowed"
         />
@@ -231,7 +231,7 @@ onMounted(() => {
           :disabled="isStreaming || !newMessage.trim()"
           class="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
         >
-          <span>{{ isStreaming ? 'Mengirim...' : 'Kirim' }}</span>
+          <span>{{ isStreaming ? 'Sending...' : 'Send' }}</span>
         </button>
       </div>
     </div>

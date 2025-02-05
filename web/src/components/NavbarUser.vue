@@ -1,3 +1,53 @@
+<script>
+import { computed, ref } from 'vue'
+import { useAuth } from '../composables/useAuth';
+import { Menu as MenuIcon, X, LayoutDashboard, Receipt, Tag, BotMessageSquare } from 'lucide-vue-next'
+
+export default {
+  name: 'NavbarUser',
+
+  components: {
+    MenuIcon,
+    X,
+    LayoutDashboard,
+    Receipt,
+    Tag,
+    BotMessageSquare,
+  },
+
+  setup() {
+    const { userName, logout } = useAuth()
+    const showMobileMenu = ref(false)
+    const showUserMenu = ref(false)
+
+    const displayInitials = computed(() => {
+      const name = userName.value || 'User'
+      return name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+    })
+
+    const displayName = computed(() => {
+      return userName.value || 'User'
+    })
+
+    const handleLogout = async () => {
+      await logout()
+    }
+
+    return {
+      showMobileMenu,
+      showUserMenu,
+      userName: displayName,
+      userInitials: displayInitials,
+      handleLogout,
+    }
+  }
+}
+</script>
+
 <template>
   <nav class="bg-white border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,7 +68,7 @@
               class="inline-flex items-center px-1 pt-1 text-sm font-medium"
               :class="[$route.path === '/dashboard' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700']"
             >
-              <i-lucide-layout-dashboard class="w-4 h-4 mr-2" />
+              <LayoutDashboard class="w-4 h-4 mr-2" />
               Dashboard
             </router-link>
 
@@ -27,7 +77,7 @@
               class="inline-flex items-center px-1 pt-1 text-sm font-medium"
               :class="[$route.path === '/transactions' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700']"
             >
-              <i-lucide-receipt class="w-4 h-4 mr-2" />
+              <Receipt class="w-4 h-4 mr-2" />
               Transactions
             </router-link>
 
@@ -36,7 +86,7 @@
               class="inline-flex items-center px-1 pt-1 text-sm font-medium"
               :class="[$route.path === '/categories' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700']"
             >
-              <i-lucide-tag class="w-4 h-4 mr-2" />
+              <Tag class="w-4 h-4 mr-2" />
               Categories
             </router-link>
 
@@ -45,7 +95,7 @@
               class="inline-flex items-center px-1 pt-1 text-sm font-medium"
               :class="[$route.path === '/chat-assistant' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700']"
             >
-              <i-lucide-tag class="w-4 h-4 mr-2" />
+              <BotMessageSquare class="w-4 h-4 mr-2" />
               AI Assistant
             </router-link>
           </div>
@@ -111,7 +161,7 @@
           class="flex items-center px-3 py-2 text-base font-medium"
           :class="[$route.path === '/dashboard' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50']"
         >
-          <i-lucide-layout-dashboard class="w-5 h-5 mr-3" />
+          <LayoutDashboard class="w-5 h-5 mr-3" />
           Dashboard
         </router-link>
 
@@ -120,7 +170,7 @@
           class="flex items-center px-3 py-2 text-base font-medium"
           :class="[$route.path === '/transactions' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50']"
         >
-          <i-lucide-receipt class="w-5 h-5 mr-3" />
+          <Receipt class="w-5 h-5 mr-3" />
           Transactions
         </router-link>
 
@@ -129,7 +179,7 @@
           class="flex items-center px-3 py-2 text-base font-medium"
           :class="[$route.path === '/categories' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50']"
         >
-          <i-lucide-tag class="w-5 h-5 mr-3" />
+          <Tag class="w-5 h-5 mr-3" />
           Categories
         </router-link>
 
@@ -138,56 +188,10 @@
           class="flex items-center px-3 py-2 text-base font-medium"
           :class="[$route.path === '/categories' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50']"
         >
-          <i-lucide-tag class="w-5 h-5 mr-3" />
+          <BotMessageSquare class="w-5 h-5 mr-3" />
           AI Assistant
         </router-link>
       </div>
     </div>
   </nav>
 </template>
-
-<script>
-import { computed, ref } from 'vue'
-import { useAuth } from '../composables/useAuth';
-import { Menu as MenuIcon, X } from 'lucide-vue-next'
-
-export default {
-  name: 'NavbarUser',
-
-  components: {
-    MenuIcon,
-    X
-  },
-
-  setup() {
-    const { userName, logout } = useAuth()
-    const showMobileMenu = ref(false)
-    const showUserMenu = ref(false)
-
-    const displayInitials = computed(() => {
-      const name = userName.value || 'User'
-      return name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-    })
-
-    const displayName = computed(() => {
-      return userName.value || 'User'
-    })
-
-    const handleLogout = async () => {
-      await logout()
-    }
-
-    return {
-      showMobileMenu,
-      showUserMenu,
-      userName: displayName,
-      userInitials: displayInitials,
-      handleLogout,
-    }
-  }
-}
-</script>
