@@ -39,6 +39,15 @@
               <i-lucide-tag class="w-4 h-4 mr-2" />
               Categories
             </router-link>
+
+            <router-link 
+              to="/chat-assistant" 
+              class="inline-flex items-center px-1 pt-1 text-sm font-medium"
+              :class="[$route.path === '/chat-assistant' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700']"
+            >
+              <i-lucide-tag class="w-4 h-4 mr-2" />
+              AI Assistant
+            </router-link>
           </div>
         </div>
 
@@ -122,6 +131,15 @@
         >
           <i-lucide-tag class="w-5 h-5 mr-3" />
           Categories
+        </router-link>
+
+        <router-link
+          to="/chat-assistant"
+          class="flex items-center px-3 py-2 text-base font-medium"
+          :class="[$route.path === '/categories' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50']"
+        >
+          <i-lucide-tag class="w-5 h-5 mr-3" />
+          AI Assistant
         </router-link>
       </div>
     </div>

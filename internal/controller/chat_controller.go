@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,12 +19,76 @@ type ChatRequest struct {
 }
 
 func cleanResponse(text string) string {
-	re := regexp.MustCompile(`<[^>]*>`)
-	cleaned := re.ReplaceAllString(text, "")
+	// Hapus tag XML tetapi pertahankan kontennya
+	re := regexp.MustCompile(`<think>(.*?)</think>`)
+	text = re.ReplaceAllString(text, "$1")
 
-	cleaned = strings.TrimSpace(cleaned)
+	re = regexp.MustCompile(`<[^>]*>`)
+	text = re.ReplaceAllString(text, "")
 
-	return cleaned
+	// Pisahkan kata-kata yang menempel
+	var result []rune
+	var lastRune rune
+	for i, r := range text {
+		if i > 0 && lastRune != ' ' {
+			// Jika bertemu huruf kapital dan sebelumnya huruf kecil, tambahkan spasi
+			if unicode.IsUpper(r) && unicode.IsLower(lastRune) {
+				result = append(result, ' ')
+			}
+			// Jika bertemu huruf dan sebelumnya angka atau sebaliknya, tambahkan spasi
+			if (unicode.IsLetter(r) && unicode.IsNumber(lastRune)) ||
+				(unicode.IsNumber(r) && unicode.IsLetter(lastRune)) {
+				result = append(result, ' ')
+			}
+		}
+		result = append(result, r)
+		lastRune = r
+	}
+	text = string(result)
+
+	// Handle markdown formatting
+	text = regexp.MustCompile(`\*\*(.*?)\*\*`).ReplaceAllString(text, "**$1**")
+	text = regexp.MustCompile(`\*(.*?)\*`).ReplaceAllString(text, "*$1*")
+	text = regexp.MustCompile(`\_(.*?)\_`).ReplaceAllString(text, "_$1_")
+
+	// Handle lists
+	text = regexp.MustCompile(`(?m)^(\d+)\.\s`).ReplaceAllString(text, "$1. ")
+	text = regexp.MustCompile(`(?m)^[-*]\s`).ReplaceAllString(text, "• ")
+
+	// Fix multiple spaces
+	text = regexp.MustCompile(`\s+`).ReplaceAllString(text, " ")
+
+	// Fix newlines
+	text = strings.ReplaceAll(text, `\n`, "\n")
+	text = regexp.MustCompile(`\n{3,}`).ReplaceAllString(text, "\n\n")
+
+	return strings.TrimSpace(text)
+}
+
+func prosesChunk(chunk string) string {
+	var processed []string
+	current := ""
+
+	for _, char := range chunk {
+		if current == "" {
+			current += string(char)
+			continue
+		}
+
+		lastChar := rune(current[len(current)-1])
+		if unicode.IsLower(lastChar) && unicode.IsUpper(char) {
+			processed = append(processed, current)
+			current = string(char)
+		} else {
+			current += string(char)
+		}
+	}
+
+	if current != "" {
+		processed = append(processed, current)
+	}
+
+	return strings.Join(processed, current)
 }
 
 func StreamChat(ctx *gin.Context) {
@@ -38,7 +103,7 @@ func StreamChat(ctx *gin.Context) {
 	ctx.Header("Cache-Control", "no-cache")
 	ctx.Header("Connection", "keep-alive")
 	ctx.Header("Access-Control-Allow-Origin", "*")
-	ctx.Header("X-Accel-Buffering", "no") // Disable nginx buffering if using nginx
+	ctx.Header("X-Accel-Buffering", "no")
 
 	// Prepare Ollama request body
 	ollamaBody := map[string]interface{}{
@@ -72,15 +137,23 @@ func StreamChat(ctx *gin.Context) {
 
 	// Create reader for response body
 	reader := bufio.NewReader(ollamaResp.Body)
+	var responseBuffer strings.Builder
 
 	// Stream response
 	for {
 		select {
 		case <-ctx.Request.Context().Done():
-			return // Client disconnected
+			return
 		default:
 			line, err := reader.ReadBytes('\n')
 			if err == io.EOF {
+				if responseBuffer.Len() > 0 {
+					processedText := cleanResponse(responseBuffer.String())
+					if processedText != "" {
+						ctx.SSEvent("message", processedText)
+						ctx.Writer.Flush()
+					}
+				}
 				return
 			}
 			if err != nil {
@@ -97,14 +170,29 @@ func StreamChat(ctx *gin.Context) {
 				continue
 			}
 
-			// Send chunk to client
-			if cleanedResponse := cleanResponse(response.Response); cleanedResponse != "" {
-				ctx.SSEvent("message", response.Response)
-				ctx.Writer.Flush()
+			if response.Response != "" {
+				processed := prosesChunk(response.Response)
+				responseBuffer.WriteString(processed)
+
+				if strings.ContainsAny(response.Response, ".!?\n") {
+					processedText := cleanResponse(responseBuffer.String())
+					if processedText != "" {
+						ctx.SSEvent("message", processedText)
+						ctx.Writer.Flush()
+						responseBuffer.Reset()
+					}
+				}
 			}
 
 			// Check if generation is complete
 			if response.Done {
+				if responseBuffer.Len() > 0 {
+					processedText := cleanResponse(responseBuffer.String())
+					if processedText != "" {
+						ctx.SSEvent("message", processedText)
+						ctx.Writer.Flush()
+					}
+				}
 				return
 			}
 		}
