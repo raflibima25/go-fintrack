@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="font-poppins ">
     <NavbarUser v-if="shouldShowNavbar"/>
     <router-view></router-view>
     <ToastContainer />

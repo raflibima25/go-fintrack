@@ -4,9 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        iowan: ['Iowan Old Style', 'serif'],
         inter: ['Inter', 'sans-serif'],
-        nunito: ['Nunito Sans', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
         montserrat: ['Montserrat', 'sans-serif']
       }
     }
