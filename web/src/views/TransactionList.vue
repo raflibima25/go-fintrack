@@ -188,11 +188,11 @@ export default {
         <h1 class="text-2xl font-bold">Transactions</h1>
         <div class="flex gap-3">
           <button @click="openCreateModal"
-                  class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                  class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
             Add Transaction
           </button>
           <button @click="exportData"
-                  class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                  class="px-4 py-2 rounded-lg hover:bg-green-50 border-2 border-green-600">
             Export Excel
           </button>
         </div>
