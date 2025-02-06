@@ -1,6 +1,7 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from 'vue-router';
+import { useToast } from "@/composables/useToast";
 import apiClient from "@/utils/api";
 import { EyeIcon, EyeOffIcon } from "lucide-vue-next";
 
@@ -15,6 +16,7 @@ export default {
         const identifier = ref('');
         const password = ref('');
         const showPassword = ref(false);
+        const { showToast } = useToast();
 
         const login = async () => {
             try {
@@ -36,7 +38,7 @@ export default {
                 } 
             } catch (error) {
                 console.error("Login error:", error)
-                alert(error.response?.data?.message || "Login failed")
+                showToast(error.response?.data?.message || "Login failed", "error")
             }
         }
 

@@ -1,6 +1,7 @@
 <script>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import { useToast } from '@/composables/useToast';
 import apiClient from "@/utils/api";
 import { EyeIcon, EyeOffIcon } from "lucide-vue-next";
 
@@ -22,6 +23,7 @@ export default {
 
         const showPassword = ref(false)
         const showConfirmPassword = ref(false)
+        const { showToast } = useToast()
 
         const register = async () => {
             try {
@@ -34,12 +36,12 @@ export default {
                 })
 
                 if (response.data.status) {
-                    alert(response.data.message)
+                    showToast(response.data.message, "success")
                     router.push("/login")
                 }
             } catch (error) {
                 console.log("Register error:", error)
-                alert(error.response?.data?.message || "Register failed")
+                showToast(error.response?.data?.message || "Register failed", "error")
             }
         }
 
