@@ -56,7 +56,7 @@ export default {
         <div class="flex">
           <!-- Logo -->
           <div class="flex-shrink-0 flex items-center">
-            <router-link to="/" class="text-xl font-bold text-blue-600">
+            <router-link to="/" class="text-2xl font-bold italic text-blue-600 font-montserrat">
               FinTrack
             </router-link>
           </div>
