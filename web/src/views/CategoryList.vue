@@ -1,112 +1,3 @@
-# CategoryList.vue
-<template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="py-6">
-      <!-- Header Section -->
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Categories</h1>
-        <button 
-          @click="openCreateModal"
-          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-        >
-          Add Category
-        </button>
-      </div>
-
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h3 class="text-lg font-semibold text-gray-600">Total Categories</h3>
-          <p class="text-2xl font-bold text-blue-500">{{ categories.length }}</p>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h3 class="text-lg font-semibold text-gray-600">Most Used</h3>
-          <p class="text-2xl font-bold text-blue-500">
-            {{ mostUsedCategory?.name || 'N/A' }}
-          </p>
-          <p class="text-sm text-gray-500">
-            {{ mostUsedCategory?.usage_count || 0 }} transactions
-          </p>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h3 class="text-lg font-semibold text-gray-600">Last Added</h3>
-          <p class="text-2xl font-bold text-blue-500">
-            {{ categories[categories.length - 1]?.name || 'N/A' }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Categories Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div v-for="category in categories" :key="category.id" 
-             class="bg-white rounded-lg shadow p-4 flex flex-col">
-          <div class="flex items-center justify-between mb-4">
-            <!-- Category Icon/Color -->
-            <div class="flex items-center">
-              <div :class="['w-10 h-10 rounded-full flex items-center justify-center', category.color || 'bg-blue-100']">
-                <i-lucide-tag :class="['w-5 h-5', category.icon_color || 'text-blue-500']" />
-              </div>
-              <span class="ml-3 font-medium">{{ category.name }}</span>
-            </div>
-            
-            <!-- Actions -->
-            <div class="flex items-center space-x-2">
-              <button @click="editCategory(category)" 
-                      class="text-blue-500 hover:text-blue-700">
-                <i-lucide-edit class="w-4 h-4" />
-              </button>
-              <button @click="confirmDelete(category)"
-                      class="text-red-500 hover:text-red-700">
-                <i-lucide-trash-2 class="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          <!-- Usage Stats -->
-          <div class="mt-auto">
-            <div class="text-sm text-gray-500">Usage</div>
-            <div class="flex items-center justify-between">
-              <div class="text-sm font-medium">
-                {{ category.usage_count || 0 }} transactions
-              </div>
-              <div class="text-sm text-gray-500">
-                {{ formatPercentage(category.usage_percentage) }}%
-              </div>
-            </div>
-            <!-- Progress bar -->
-            <div class="w-full h-2 bg-gray-200 rounded-full mt-1">
-              <div class="h-2 bg-blue-500 rounded-full"
-                   :style="{ width: (category.usage_percentage || 0) + '%' }" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Category Modal -->
-    <CategoryFormModal
-      v-if="showModal"
-      :show="showModal"
-      :category="selectedCategory"
-      @close="closeModal"
-      @submit="handleSubmit"
-    />
-
-    <!-- Delete Confirmation Modal -->
-    <ConfirmationModal
-      v-if="showDeleteModal"
-      :show="showDeleteModal"
-      @close="showDeleteModal = false"
-      @confirm="handleDelete"
-    >
-      <template #title>Delete Category</template>
-      <template #content>
-        Are you sure you want to delete this category? This will not delete any transactions, but they will no longer be associated with this category.
-      </template>
-    </ConfirmationModal>
-  </div>
-</template>
-
 <script>
 import { ref, onMounted, computed } from 'vue'
 import { useToast } from '@/composables/useToast'
@@ -250,3 +141,111 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-6">
+      <!-- Header Section -->
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Categories</h1>
+        <button 
+          @click="openCreateModal"
+          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        >
+          Add Category
+        </button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h3 class="text-lg font-semibold text-gray-600">Total Categories</h3>
+          <p class="text-2xl font-bold text-blue-500">{{ categories.length }}</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h3 class="text-lg font-semibold text-gray-600">Most Used</h3>
+          <p class="text-2xl font-bold text-blue-500">
+            {{ mostUsedCategory?.name || 'N/A' }}
+          </p>
+          <p class="text-sm text-gray-500">
+            {{ mostUsedCategory?.usage_count || 0 }} transactions
+          </p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h3 class="text-lg font-semibold text-gray-600">Last Added</h3>
+          <p class="text-2xl font-bold text-blue-500">
+            {{ categories[categories.length - 1]?.name || 'N/A' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Categories Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div v-for="category in categories" :key="category.id" 
+             class="bg-white rounded-lg shadow p-4 flex flex-col">
+          <div class="flex items-center justify-between mb-4">
+            <!-- Category Icon/Color -->
+            <div class="flex items-center">
+              <div :class="['w-10 h-10 rounded-full flex items-center justify-center', category.color || 'bg-blue-100']">
+                <i-lucide-tag :class="['w-5 h-5', category.icon_color || 'text-blue-500']" />
+              </div>
+              <span class="ml-3 font-medium">{{ category.name }}</span>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex items-center space-x-2">
+              <button @click="editCategory(category)" 
+                      class="text-blue-500 hover:text-blue-700">
+                <i-lucide-edit class="w-4 h-4" />
+              </button>
+              <button @click="confirmDelete(category)"
+                      class="text-red-500 hover:text-red-700">
+                <i-lucide-trash-2 class="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Usage Stats -->
+          <div class="mt-auto">
+            <div class="text-sm text-gray-500">Usage</div>
+            <div class="flex items-center justify-between">
+              <div class="text-sm font-medium">
+                {{ category.usage_count || 0 }} transactions
+              </div>
+              <div class="text-sm text-gray-500">
+                {{ formatPercentage(category.usage_percentage) }}%
+              </div>
+            </div>
+            <!-- Progress bar -->
+            <div class="w-full h-2 bg-gray-200 rounded-full mt-1">
+              <div class="h-2 bg-blue-500 rounded-full"
+                   :style="{ width: (category.usage_percentage || 0) + '%' }" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Modal -->
+    <CategoryFormModal
+      v-if="showModal"
+      :show="showModal"
+      :category="selectedCategory"
+      @close="closeModal"
+      @submit="handleSubmit"
+    />
+
+    <!-- Delete Confirmation Modal -->
+    <ConfirmationModal
+      v-if="showDeleteModal"
+      :show="showDeleteModal"
+      @close="showDeleteModal = false"
+      @confirm="handleDelete"
+    >
+      <template #title>Delete Category</template>
+      <template #content>
+        Are you sure you want to delete this category? This will not delete any transactions, but they will no longer be associated with this category.
+      </template>
+    </ConfirmationModal>
+  </div>
+</template>

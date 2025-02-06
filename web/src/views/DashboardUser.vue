@@ -1,32 +1,11 @@
-<template>
-  <div class="min-h-screen bg-gray-100 p-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Welcome to the Dashboard User</h1>
-        <button
-            @click="logout"
-            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-        >
-          Logout
-        </button>
-      </div>
-
-      <!-- content -->
-      <div class="max-w-7xl mx-auto">
-        <TransactionList />
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
 import { onMounted } from "vue";
 import { useAuth } from "../composables/useAuth";
-import TransactionList from "@/views/TransactionList.vue";
+import FinancialOverview from "../components/FinancialOverview.vue";
 
 export default {
   name: 'DashboardUser',
-  components: {TransactionList},
+  components: {FinancialOverview},
 
   setup() {
     const { checkAuth, logout } = useAuth()
@@ -57,3 +36,49 @@ button {
   cursor: pointer;
 }
 </style>
+
+<template>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- main container -->
+    <div class="py-6">
+      <!-- header section -->
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Dashboard</h1>
+        <p class="text-gray-600">Welcome back, User!</p>
+      </div>
+
+      <!-- dashboard grid -->
+      <div class="grid grid-cols-12 gap-6">
+        <!-- financial overview -->
+         <div class="col-span-12">
+           <FinancialOverview />
+         </div>
+
+         <!-- expense analysis charts -->
+         <div class="col-span-12 lg:col-span-8">
+          <ExpenseAnalysis />
+         </div>
+
+         <!-- recent activity -->
+         <div class="col-span-12 lg:col-span-8">
+          <RecentActivity />
+         </div>
+
+         <!-- budget monitoring -->
+         <div class="col-span-12 lg:col-span-8">
+          <BudgetMonitoring />
+         </div>
+
+         <!-- financial goals -->
+         <div class="col-span-12 lg:col-span-8">
+          <FinancialGoals />
+         </div>
+
+         <!-- insights -->
+         <div class="col-span-12 lg:col-span-8">
+          <Insight />
+         </div>
+      </div>
+    </div>
+  </div>
+</template>
