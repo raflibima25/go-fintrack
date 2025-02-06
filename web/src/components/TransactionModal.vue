@@ -1,116 +1,7 @@
-<template>
-  <div>
-    <!-- Main Modal -->
-    <BaseModal :show="show" @close="closeModal">
-      <template #title>
-        {{ isEdit ? 'Edit Transaction' : 'Create New Transaction' }}
-      </template>
-      <template #content>
-        <form @submit.prevent="handleSubmit" class="space-y-4">
-          <!-- Type Field -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-            <select v-model="form.type" required
-                    class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
-          </div>
-
-          <!-- Category Field -->
-          <div>
-            <div class="flex items-center justify-between">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-              <div class="text-sm">
-                <button 
-                  type="button"
-                  @click="showCategoryModal = true" 
-                  class="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  Add category
-                </button>
-              </div>
-            </div>
-            <select v-model="form.category_id" required
-                    class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
-            </select>
-          </div>
-
-          <!-- Amount Field -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-            <input
-                type="number"
-                v-model="form.amount"
-                required
-                min="0"
-                step="0.01"
-                class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter amount"
-            >
-          </div>
-
-          <!-- Date Field -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-            <input
-                type="date"
-                v-model="form.date"
-                required
-                class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-          </div>
-
-          <!-- Description Field -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea
-                v-model="form.description"
-                rows="3"
-                class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter description"
-            ></textarea>
-          </div>
-
-          <!-- Form Actions -->
-          <div class="flex justify-end gap-3 pt-4">
-            <button
-                type="button"
-                @click="closeModal"
-                class="px-4 py-2 border rounded-lg hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-                type="submit"
-                :disabled="isSubmitting"
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
-            >
-              {{ isEdit ? 'Update' : 'Create' }}
-            </button>
-          </div>
-        </form>
-      </template>
-    </BaseModal>
-
-    <!-- Category Modal -->
-    <CategoryModal
-      v-if="showCategoryModal"
-      :show="showCategoryModal"
-      :category="null"
-      @close="showCategoryModal = false"
-      @submit="handleCategorySubmit"
-    />
-  </div>
-</template>
-
 <script>
 import { ref, computed, watch } from 'vue'
 import BaseModal from '@/components/BaseModal.vue'
-import CategoryModal from '@/components/CategoryModal.vue'
+import CategoryFormModal from '@/components/CategoryFormModal.vue'
 import { useToast } from '@/composables/useToast'
 import { categoryService } from '@/services/categoryService'
 
@@ -119,7 +10,7 @@ export default {
 
   components: {
     BaseModal,
-    CategoryModal
+    CategoryFormModal
   },
 
   props: {
@@ -141,7 +32,7 @@ export default {
 
   setup(props, { emit }) {
     const { showToast } = useToast()
-    const showCategoryModal = ref(false)
+    const showCategoryFormModal = ref(false)
     const isSubmitting = ref(false)
 
     // Form state
@@ -253,7 +144,7 @@ export default {
           }
           
           onSuccess()
-          showCategoryModal.value = false
+          showCategoryFormModal.value = false
         } else {
           onError(response.data.message)
           showToast(response.data.message, 'error')
@@ -269,7 +160,7 @@ export default {
       form,
       isEdit,
       isSubmitting,
-      showCategoryModal,
+      showCategoryFormModal,
       closeModal,
       handleSubmit,
       handleCategorySubmit
@@ -277,3 +168,112 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div>
+    <!-- Main Modal -->
+    <BaseModal :show="show" @close="closeModal">
+      <template #title>
+        {{ isEdit ? 'Edit Transaction' : 'Create New Transaction' }}
+      </template>
+      <template #content>
+        <form @submit.prevent="handleSubmit" class="space-y-4">
+          <!-- Type Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+            <select v-model="form.type" required
+                    class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </div>
+
+          <!-- Category Field -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <div class="text-sm">
+                <button 
+                  type="button"
+                  @click="showCategoryFormModal = true" 
+                  class="font-semibold text-indigo-600 hover:text-indigo-500"
+                >
+                  Add category
+                </button>
+              </div>
+            </div>
+            <select v-model="form.category_id" required
+                    class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+              <option v-for="category in categories" :key="category.id" :value="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Amount Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+            <input
+                type="number"
+                v-model="form.amount"
+                required
+                min="0"
+                step="0.01"
+                class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter amount"
+            >
+          </div>
+
+          <!-- Date Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <input
+                type="date"
+                v-model="form.date"
+                required
+                class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+          </div>
+
+          <!-- Description Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+                v-model="form.description"
+                rows="3"
+                class="w-full border rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter description"
+            ></textarea>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex justify-end gap-3 pt-4">
+            <button
+                type="button"
+                @click="closeModal"
+                class="px-4 py-2 border rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+                type="submit"
+                :disabled="isSubmitting"
+                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+            >
+              {{ isEdit ? 'Update' : 'Create' }}
+            </button>
+          </div>
+        </form>
+      </template>
+    </BaseModal>
+
+    <!-- Category Modal -->
+    <CategoryFormModal
+      v-if="showCategoryFormModal"
+      :show="showCategoryFormModal"
+      :category="null"
+      @close="showCategoryFormModal = false"
+      @submit="handleCategorySubmit"
+    />
+  </div>
+</template>

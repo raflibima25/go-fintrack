@@ -1,4 +1,3 @@
-# ConfirmationModal.vue
 <template>
   <BaseModal :show="show" @close="$emit('close')">
     <template #title>

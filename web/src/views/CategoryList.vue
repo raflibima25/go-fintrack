@@ -4,13 +4,17 @@ import { useToast } from '@/composables/useToast'
 import { categoryService } from '@/services/categoryService'
 import CategoryFormModal from '@/components/CategoryFormModal.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
+import { Tag, Edit, Trash2 } from 'lucide-vue-next'
 
 export default {
   name: 'CategoryList',
   
   components: {
     CategoryFormModal,
-    ConfirmationModal
+    ConfirmationModal,
+    Tag,
+    Edit,
+    Trash2
   },
 
   setup() {
@@ -187,7 +191,7 @@ export default {
             <!-- Category Icon/Color -->
             <div class="flex items-center">
               <div :class="['w-10 h-10 rounded-full flex items-center justify-center', category.color || 'bg-blue-100']">
-                <i-lucide-tag :class="['w-5 h-5', category.icon_color || 'text-blue-500']" />
+                <Tag :class="['w-5 h-5', category.icon_color || 'text-blue-500']" />
               </div>
               <span class="ml-3 font-medium">{{ category.name }}</span>
             </div>
@@ -196,11 +200,11 @@ export default {
             <div class="flex items-center space-x-2">
               <button @click="editCategory(category)" 
                       class="text-blue-500 hover:text-blue-700">
-                <i-lucide-edit class="w-4 h-4" />
+                <Edit class="w-4 h-4" />
               </button>
               <button @click="confirmDelete(category)"
                       class="text-red-500 hover:text-red-700">
-                <i-lucide-trash-2 class="w-4 h-4" />
+                <Trash2 class="w-4 h-4" />
               </button>
             </div>
           </div>
