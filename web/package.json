@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.23",
     "@mdi/js": "^7.4.47",
     "axios": "^1.7.9",
     "lucide-vue-next": "^0.344.0",
