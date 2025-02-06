@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Gunakan lazy loading untuk semua komponen
-const Login = () => import('@/views/UserLogin.vue')
-const Register = () => import('@/views/UserRegister.vue')
+const Login = () => import('@/views/LoginAuth.vue')
+const Register = () => import('@/views/RegisterAuth.vue')
 const DashboardUser = () => import('@/views/DashboardUser.vue')
 const DashboardAdmin = () => import('@/views/DashboardAdmin.vue')
 const PageNotFound = () => import('@/views/PageNotFound.vue')
@@ -24,7 +24,7 @@ const routes = [
   },
   {
     path: '/login',
-    name: 'UserLogin',
+    name: 'LoginAuth',
     component: Login,
     meta: {
       requiresAuth: false,
@@ -33,7 +33,7 @@ const routes = [
   },
   {
     path: '/register',
-    name: 'UserRegister',
+    name: 'Register',
     component: Register,
     meta: {
       requiresAuth: false,
@@ -119,7 +119,7 @@ router.beforeEach(async (to, from, next) => {
   // Jika route memerlukan auth dan user tidak terautentikasi
   if (to.meta.requiresAuth && !isAuthenticated()) {
     next({
-      name: 'UserLogin',
+      name: 'LoginAuth',
       query: { redirect: to.fullPath }
     })
     return

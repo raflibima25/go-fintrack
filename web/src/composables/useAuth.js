@@ -24,7 +24,7 @@ export function useAuth() {
     // cek auth
     if (!isAuthenticated.value) {
       router.push({
-        name: 'UserLogin',
+        name: 'LoginAuth',
         query: { redirect: router.currentRoute.value.fullPath }
       })
       return false
@@ -44,7 +44,7 @@ export function useAuth() {
       localStorage.removeItem('token')
       localStorage.removeItem('isAdmin')
       localStorage.removeItem('userName')
-      router.push({ name: 'UserLogin' })
+      router.push({ name: 'LoginAuth' })
     } catch (error) {
       console.error('Error logout:', error)
     }
