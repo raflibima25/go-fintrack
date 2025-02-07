@@ -46,7 +46,7 @@ func (s *UserService) RegisterUser(name, email, username, password string) error
 	// hash pass
 	hashedPassword, err := utility.HashPassword(password)
 	if err != nil {
-		return errors.New("internal server error during registration")
+		return fmt.Errorf("error hashing password: %v", err)
 	}
 
 	// create user
@@ -59,7 +59,7 @@ func (s *UserService) RegisterUser(name, email, username, password string) error
 
 	// save database
 	if err := s.DB.Create(&newUser).Error; err != nil {
-		return fmt.Errorf("internal server error during registration")
+		return fmt.Errorf("error creating user: %v", err)
 	}
 
 	return nil

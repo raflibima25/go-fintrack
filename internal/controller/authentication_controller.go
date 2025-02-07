@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"go-fintrack/internal/payload/request"
 	"go-fintrack/internal/payload/response"
 	"go-fintrack/internal/service"
@@ -49,6 +50,7 @@ func (c *UserController) RegisterHandler(ctx *gin.Context) {
 	}
 
 	err := c.UserService.RegisterUser(req.Name, req.Email, req.Username, req.Password)
+	fmt.Println("err register", err)
 	if err != nil {
 		switch err {
 		case service.ErrWeakPassword:
