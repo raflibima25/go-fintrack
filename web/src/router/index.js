@@ -8,7 +8,7 @@ const DashboardAdmin = () => import('@/views/DashboardAdmin.vue')
 const PageNotFound = () => import('@/views/PageNotFound.vue')
 const TransactionList = () => import('@/views/TransactionList.vue')
 const CategoryList = () => import('@/views/CategoryList.vue')
-const ChatAssistant = () => import('@/components/ChatAssistant.vue')
+const ChatAssistant = () => import('@/views/ChatAssistant.vue')
 
 const routes = [
   // public routes
@@ -48,7 +48,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       role: 'user',
-      title: 'Dashboard'
+      title: 'Dashboard',
+      layout: 'UserLayout'
     }
   },
   {
@@ -58,7 +59,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       role: 'user',
-      title: 'Transactions'
+      title: 'Transactions',
+      layout: 'UserLayout'
     }
   },
   {
@@ -68,7 +70,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       role: 'user',
-      title: 'Categories'
+      title: 'Categories',
+      layout: 'UserLayout'
     }
   },
   {
@@ -78,7 +81,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       role: 'user',
-      title: 'Chat Assistant'
+      title: 'Chat Assistant',
+      layout: 'UserLayout'
     }
   },
   // admin routes

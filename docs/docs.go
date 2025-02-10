@@ -349,6 +349,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/dashboard/overview": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get user's financial overview including current balance, monthly income, monthly expense, and monthly savings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dashboard"
+                ],
+                "summary": "Get financial overview",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ApiResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.RespFinancialOverview"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/transaction": {
             "get": {
                 "security": [
@@ -853,6 +905,23 @@ const docTemplate = `{
                 },
                 "total_page": {
                     "type": "integer"
+                }
+            }
+        },
+        "response.RespFinancialOverview": {
+            "type": "object",
+            "properties": {
+                "current_balance": {
+                    "type": "number"
+                },
+                "monthly_expense": {
+                    "type": "number"
+                },
+                "monthly_income": {
+                    "type": "number"
+                },
+                "total_savings": {
+                    "type": "number"
                 }
             }
         },

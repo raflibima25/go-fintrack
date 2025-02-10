@@ -37,44 +37,52 @@ func (s *UserService) RegisterUser(name, email, username, password string) error
 		return err
 	}
 
-	// cek email or username exists
-	var existingUser entity.User
-	if err := s.DB.Where("email = ? OR username = ?", email, username).First(&existingUser).Error; err == nil {
-		return ErrUserExists
-	}
+	err := s.DB.Transaction(func(tx *gorm.DB) error {
+		// cek email or username exists
+		var existingUser entity.User
+		if err := tx.Where("email = ? OR username = ?", email, username).First(&existingUser).Error; err == nil {
+			return ErrUserExists
+		} else if err != gorm.ErrRecordNotFound {
+			return fmt.Errorf("error checking user existence: %v", err)
+		}
 
-	// hash pass
-	hashedPassword, err := utility.HashPassword(password)
-	if err != nil {
-		return fmt.Errorf("error hashing password: %v", err)
-	}
+		// hash pass
+		hashedPassword, err := utility.HashPassword(password)
+		if err != nil {
+			return fmt.Errorf("error hashing password: %v", err)
+		}
 
-	// create user
-	newUser := entity.User{
-		Name:     name,
-		Email:    email,
-		Username: username,
-		Password: hashedPassword,
-	}
+		// create user
+		newUser := entity.User{
+			Name:     name,
+			Email:    email,
+			Username: username,
+			Password: hashedPassword,
+		}
 
-	// save database
-	if err := s.DB.Create(&newUser).Error; err != nil {
-		return fmt.Errorf("error creating user: %v", err)
-	}
+		// save database
+		if err := tx.Create(&newUser).Error; err != nil {
+			return fmt.Errorf("error creating user: %v", err)
+		}
 
-	return nil
+		return nil
+	})
+
+	return err
 }
 
 func (s *UserService) Login(emailOrUsername, password string) (string, *entity.User, error) {
 	var user entity.User
 
+	// find user
 	if err := s.DB.Where("email = ? OR username = ?", emailOrUsername, emailOrUsername).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return "", nil, ErrInvalidCredentials
 		}
-		return "", nil, fmt.Errorf("internal server error during login")
+		return "", nil, fmt.Errorf("internal server error during login: %v", err)
 	}
 
+	// verify password
 	if err := utility.CompareHashAndPassword(user.Password, password); err != nil {
 		return "", nil, ErrInvalidCredentials
 	}
@@ -82,7 +90,7 @@ func (s *UserService) Login(emailOrUsername, password string) (string, *entity.U
 	// generate jwt
 	token, err := utility.GenerateJWT(user.ID, user.Username, user.IsAdmin)
 	if err != nil {
-		return "", nil, fmt.Errorf("internal server error during login")
+		return "", nil, fmt.Errorf("internal server error during login: %v", err)
 	}
 
 	return token, &user, nil

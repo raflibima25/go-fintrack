@@ -1,54 +1,109 @@
-<script>
-import { ref } from "vue";
+<script setup>
+import { ref, reactive } from "vue";
 import { useRouter } from 'vue-router';
 import { useToast } from "@/composables/useToast";
 import apiClient from "@/utils/api";
 import { EyeIcon, EyeOffIcon } from "lucide-vue-next";
 
-export default {
-    name: 'LoginCard',
-    components: {
-        EyeIcon,
-        EyeOffIcon
-    },
-    setup() {
-        const router = useRouter();
-        const identifier = ref('');
-        const password = ref('');
-        const showPassword = ref(false);
-        const { showToast } = useToast();
+const router = useRouter();
+const { showToast } = useToast();
 
-        const login = async () => {
-            try {
-                const response = await apiClient.post("/auth/login", {
-                    email_or_username: identifier.value, // email_or_username dan password merupakan field json backend
-                    password: password.value
-                });
-
-                if (response.data.status) {
-                    localStorage.setItem("token", response.data.data.access_token);
-                    localStorage.setItem("isAdmin", response.data.data.is_admin);
-
-                    // redirect berdasarkan role
-                    if (response.data.data.is_admin) {
-                        router.push("/admin-dashboard");
-                    } else {
-                        router.push("/dashboard");
-                    }
-                } 
-            } catch (error) {
-                console.error("Login error:", error)
-                showToast(error.response?.data?.message || "Login failed", "error")
-            }
-        }
-
-        return {
-            identifier,
-            password,
-            showPassword,
-            login
-        }
+const formState = reactive({
+    identifier: '',
+    password: '',
+    isLoading: false,
+    errors: {
+        identifier: '',
+        password: '',
+        general: ''
     }
+});
+
+const showPassword = ref(false);
+
+const validateForm = () => {
+    let isValid = true;
+    formState.errors = {
+        identifier: '',
+        password: '',
+        general: ''
+    };
+
+    if (!formState.identifier.trim()) {
+        formState.errors.identifier = 'Username or email is required';
+        isValid = false;
+    }
+
+    if (!formState.password) {
+        formState.errors.password = 'Password is required';
+        isValid = false;
+    }
+
+    if (formState.password && formState.password.length < 8) {
+        formState.errors.password = 'Password must be at least 8 characters';
+        isValid = false;
+    }
+
+    return isValid;
+};
+
+const togglePasswordVisibility = () => {
+    showPassword.value = !showPassword.value;
+};
+
+const handleLogin = async (e) => {
+    e?.preventDefault();
+
+    if (!validateForm()) return false;
+
+    formState.isLoading = true;
+    formState.errors.general = '';
+
+    try {
+        const response = await apiClient.post('/auth/login', {
+            email_or_username: formState.identifier.trim(),
+            password: formState.password
+        });
+
+        console.log('Login response:', response.data); // Untuk debugging
+
+        if (response.data.status) {
+            localStorage.setItem("token", response.data.data.access_token);
+            localStorage.setItem("isAdmin", response.data.data.is_admin);
+            
+            showToast("Login successful", "success");
+
+            // redirect base on role
+            const redirectPath = response.data.data.is_admin ? "/admin-dashboard" : "/dashboard";
+            await router.push(redirectPath);
+        } else {
+            throw new Error(response.data.message || "Login failed. Please try again.");
+        }
+    } catch (error) {
+        console.error('Login error:', error); // Untuk debugging
+
+        let errorMessage = "An unexpected error occurred";
+        
+        if (error.response) {
+            errorMessage = error.response.data.message || "Login failed. Please try again.";
+            if (error.response.status === 401) {
+                errorMessage = "Invalid email/username or password";
+            } else if (error.response.status === 400) {
+                errorMessage = error.response.data.message || "Invalid input";
+            }
+        } else if (error.request) {
+            errorMessage = "Network error. Please check your connection";
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+
+        formState.errors.general = errorMessage;
+        showToast(errorMessage, "error");
+    } finally {
+        formState.isLoading = false;
+    }
+
+    return false;
 };
 </script>
 
@@ -63,19 +118,31 @@ export default {
             </p>
         </div>
 
-        <form @submit.prevent="login" class="mt-8 space-y-6">
+        <!-- error message -->
+        <div v-if="formState.errors.general" class="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
+            {{ formState.errors.general }}
+        </div>
+
+        <!-- Gunakan .prevent di sini -->
+        <form @submit.prevent.stop="handleLogin" class="mt-8 space-y-6" novalidate>
             <div>
-                <label for="username_or_email" class="block text-sm font-medium text-gray-700">
+                <label for="identifier" class="block text-sm font-medium text-gray-700">
                     Username or Email
                 </label>
                 <input 
-                    id="username_or_email"
-                    v-model="identifier"
+                    id="identifier"
+                    v-model="formState.identifier"
                     type="text"
-                    required
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                    :class="[
+                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+                        formState.errors.identifier ? 'border-red-300' : 'border-gray-300'
+                    ]" 
+                    :disabled="formState.isLoading"
                     placeholder="Enter your valid username or email"
                 />
+                <p v-if="formState.errors.identifier" class="mt-1 text-sm text-red-600">
+                    {{ formState.errors.identifier }}
+                </p>
             </div>
 
             <div>
@@ -85,27 +152,42 @@ export default {
                 <div class="relative mt-1">
                     <input 
                         id="password"
-                        v-model="password"
+                        v-model="formState.password"
                         :type="showPassword ? 'text' : 'password'"
-                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        :class="[
+                            'block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+                            formState.errors.password ? 'border-red-500' : 'border-gray-300'
+                        ]"
+                        :disabled="formState.isLoading"
                         placeholder="********"
                     />
                     <button
                         type="button"
-                        @click="showPassword = !showPassword"
+                        @click="togglePasswordVisibility"
                         class="absolute inset-y-0 right-0 flex items-center pr-3"
+                        :disabled="formState.isLoading"
                     >
                         <EyeIcon v-if="!showPassword" class="h-7 w-7 text-gray-400 pr-2" />
                         <EyeOffIcon v-else class="h-7 w-7 text-gray-400 pr-2" />
                     </button>
                 </div>
+                <p v-if="formState.errors.password" class="mt-1 text-sm text-red-600">
+                    {{ formState.errors.password }}
+                </p>
             </div>
 
             <button
                 type="submit"
-                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                :disabled="formState.isLoading"
+                :class="[
+                    'w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm font-medium text-white',
+                    formState.isLoading
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                ]"
             >
-                Login
+                <span v-if="formState.isLoading">Loading...</span>
+                <span v-else>Login</span>
             </button>
         </form>
     </div>

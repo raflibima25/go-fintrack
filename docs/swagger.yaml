@@ -118,6 +118,17 @@ definitions:
       total_page:
         type: integer
     type: object
+  response.RespFinancialOverview:
+    properties:
+      current_balance:
+        type: number
+      monthly_expense:
+        type: number
+      monthly_income:
+        type: number
+      total_savings:
+        type: number
+    type: object
   response.TransactionListResponse:
     properties:
       pagination:
@@ -381,6 +392,37 @@ paths:
       summary: Update category
       tags:
       - categories
+  /dashboard/overview:
+    get:
+      consumes:
+      - application/json
+      description: Get user's financial overview including current balance, monthly
+        income, monthly expense, and monthly savings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ApiResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.RespFinancialOverview'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      security:
+      - BearerAuth: []
+      summary: Get financial overview
+      tags:
+      - dashboard
   /transaction:
     get:
       consumes:
