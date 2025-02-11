@@ -40,7 +40,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	api := r.Group("/api")
 	{
 		api.GET("/health-check", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, response.ApiResponse{
+			ctx.JSON(http.StatusOK, response.SuccessResponse{
 				ResponseStatus:  true,
 				ResponseMessage: "ok",
 				Data:            nil,
@@ -59,6 +59,13 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 		{
 			userRouter.POST("/register", userController.RegisterHandler)
 			userRouter.POST("/login", userController.LoginHandler)
+
+			// google auth
+			googleAuth := userRouter.Group("/google")
+			{
+				googleAuth.GET("/login", userController.GoogleLogin)
+				googleAuth.GET("/callback", userController.GoogleCallback)
+			}
 		}
 
 		// dashboard endpoint
@@ -107,7 +114,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	r.NoRoute(func(ctx *gin.Context) {
 		// not found enpoint
 		if strings.HasPrefix(ctx.Request.URL.Path, "/api/") {
-			ctx.JSON(http.StatusNotFound, response.ApiResponse{
+			ctx.JSON(http.StatusNotFound, response.SuccessResponse{
 				ResponseStatus:  false,
 				ResponseMessage: "Endpoint not found",
 				Data:            nil,

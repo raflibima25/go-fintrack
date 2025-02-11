@@ -1,11 +1,15 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"go-fintrack/internal/payload/entity"
+	"go-fintrack/internal/payload/request"
 	"go-fintrack/internal/utility"
 	"regexp"
+	"strings"
+	"unicode"
 
 	"gorm.io/gorm"
 )
@@ -37,6 +41,15 @@ func (s *UserService) RegisterUser(name, email, username, password string) error
 		return err
 	}
 
+	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	if !emailRegex.MatchString(email) {
+		return fmt.Errorf("invalid email format")
+	}
+
+	if len(username) < 3 {
+		return fmt.Errorf("username must be at least 3 characters long")
+	}
+
 	err := s.DB.Transaction(func(tx *gorm.DB) error {
 		// cek email or username exists
 		var existingUser entity.User
@@ -58,6 +71,7 @@ func (s *UserService) RegisterUser(name, email, username, password string) error
 			Email:    email,
 			Username: username,
 			Password: hashedPassword,
+			Provider: "email",
 		}
 
 		// save database
@@ -94,4 +108,47 @@ func (s *UserService) Login(emailOrUsername, password string) (string, *entity.U
 	}
 
 	return token, &user, nil
+}
+
+func (s *UserService) UpsertGoogleUser(ctx context.Context, googleUser *request.GoogleUser) (*entity.User, error) {
+	var user entity.User
+
+	err := s.DB.Transaction(func(tx *gorm.DB) error {
+		result := tx.Where("email = ?", googleUser.Email).First(&user)
+
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			newUser := entity.User{
+				Name:       googleUser.Name,
+				Username:   strings.ToLower(strings.Join(strings.FieldsFunc(googleUser.Name, func(r rune) bool { return unicode.IsSpace(r) }), "")),
+				Email:      googleUser.Email,
+				IsAdmin:    false,
+				Provider:   "google",
+				ProfilePic: googleUser.Picture,
+			}
+
+			if err := tx.Create(&newUser).Error; err != nil {
+				return fmt.Errorf("error creating user: %v", err)
+			}
+		} else if result.Error != nil {
+			return fmt.Errorf("error checking user existence: %v", result.Error)
+		} else {
+			// update user jika ada
+			user.Name = googleUser.Name
+			user.Username = strings.ToLower(strings.Join(strings.FieldsFunc(googleUser.Name, func(r rune) bool { return unicode.IsSpace(r) }), ""))
+			user.ProfilePic = googleUser.Picture
+			user.Provider = "google"
+
+			if err := tx.Save(&user).Error; err != nil {
+				return fmt.Errorf("error updating user: %v", err)
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useToast } from "@/composables/useToast";
 import apiClient from "@/utils/api";
 import { EyeIcon, EyeOffIcon } from "lucide-vue-next";
+import GoogleAuthButton from "./GoogleAuthButton.vue";
 
 const router = useRouter();
 const { showToast } = useToast();
@@ -123,8 +124,24 @@ const handleLogin = async (e) => {
             {{ formState.errors.general }}
         </div>
 
+        <div class="mt-6">
+            <div class="mt-6">
+                <GoogleAuthButton :is-loading="formState.isLoading" />
+            </div>
+
+            <div class="relative mt-6">
+                <div class="relative flex justify-center text-sm z-50">
+                    <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                </div>
+
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Gunakan .prevent di sini -->
-        <form @submit.prevent.stop="handleLogin" class="mt-8 space-y-6" novalidate>
+        <form @submit.prevent.stop="handleLogin" class="mt-6 space-y-6" novalidate>
             <div>
                 <label for="identifier" class="block text-sm font-medium text-gray-700">
                     Username or Email

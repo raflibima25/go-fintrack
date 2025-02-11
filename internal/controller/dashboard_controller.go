@@ -27,9 +27,9 @@ func NewDashboardController(dashboardService *service.DashboardService) *Dashboa
 // @Accept 		json
 // @Produce 	json
 // @Security 	BearerAuth
-// @Success 	200 {object} response.ApiResponse{data=response.RespFinancialOverview}
-// @Failure 	401 {object} response.ApiResponse
-// @Failure 	500 {object} response.ApiResponse
+// @Success 	200 {object} response.SuccessResponse{data=response.RespFinancialOverview}
+// @Failure 	401 {object} response.SuccessResponse
+// @Failure 	500 {object} response.SuccessResponse
 // @Router 		/dashboard/overview [get]
 func (c *DashboardController) GetFinancialOverviewHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -42,11 +42,11 @@ func (c *DashboardController) GetFinancialOverviewHandler(ctx *gin.Context) {
 	overview, err := c.DashboardService.GetFinancialOverview(userID)
 	if err != nil {
 		logrus.Errorf("Error getting financial overview: %v", err)
-		utility.ServerErrorResponse(ctx, err)
+		utility.InternalServerErrorResponse(ctx, "Failed to get financial overview", err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusOK, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Get Financial Overview successful",
 		Data:            overview,

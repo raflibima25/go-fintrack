@@ -31,9 +31,9 @@ type TransactionController struct {
 // @Param 		type 		query 	string 	false 	"Transaction type (income/expense)"
 // @Param 		page 		query 	int 	false 	"Page number"
 // @Param 		limit 		query 	int 	false 	"Limit per page"
-// @Success 	200 {object} response.ApiResponse{data=response.TransactionListResponse}
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	200 {object} response.SuccessResponse{data=response.TransactionListResponse}
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/transaction [get]
 func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -57,7 +57,7 @@ func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusOK, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Get transactions successful",
 		Data:            transactions,
@@ -72,9 +72,9 @@ func (c *TransactionController) GetTransactionHandler(ctx *gin.Context) {
 // @Produce 	json
 // @Security 	BearerAuth
 // @Param 		request body request.CreateTransactionRequest true "Transaction data"
-// @Success 	201 {object} response.ApiResponse{data=response.TransactionResponse}
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	201 {object} response.SuccessResponse{data=response.TransactionResponse}
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/transaction [post]
 func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -95,7 +95,7 @@ func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, response.ApiResponse{
+	ctx.JSON(http.StatusCreated, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Transaction created",
 		Data:            transaction,
@@ -111,9 +111,9 @@ func (c *TransactionController) CreateTransactionHandler(ctx *gin.Context) {
 // @Security 	BearerAuth
 // @Param 		id path int true "Transaction ID"
 // @Param 		request body request.UpdateTransactionRequest true "Transaction data"
-// @Success 	201 {object} response.ApiResponse{data=response.TransactionResponse}
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	201 {object} response.SuccessResponse{data=response.TransactionResponse}
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/transaction/{id} [put]
 func (c *TransactionController) UpdateTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -140,7 +140,7 @@ func (c *TransactionController) UpdateTransactionHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusOK, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Transaction updated",
 		Data:            transaction,
@@ -155,9 +155,9 @@ func (c *TransactionController) UpdateTransactionHandler(ctx *gin.Context) {
 // @Produce 	json
 // @Security 	BearerAuth
 // @Param 		id path int true "Transaction ID"
-// @Success 	200 {object} response.ApiResponse
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	200 {object} response.SuccessResponse
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/transaction/{id} [delete]
 func (c *TransactionController) DeleteTransactionHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -177,7 +177,7 @@ func (c *TransactionController) DeleteTransactionHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusOK, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Transaction deleted",
 		Data:            nil,
@@ -196,8 +196,8 @@ func (c *TransactionController) DeleteTransactionHandler(ctx *gin.Context) {
 // @Param 		category_id	query 	int 	false 	"Category ID"
 // @Param 		type 		query 	string 	false 	"Transaction type (income/expense)"
 // @Success 	200 {file} file "Excel file download"
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/transaction/export [get]
 func (c *TransactionController) ExportTransactionsExcelHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -217,7 +217,7 @@ func (c *TransactionController) ExportTransactionsExcelHandler(ctx *gin.Context)
 	buffer, err := c.TransactionService.ExportTransactionsExcel(userID, filter)
 	if err != nil {
 		logrus.Errorf("Error exporting transactions: %v", err)
-		utility.ServerErrorResponse(ctx, err)
+		utility.InternalServerErrorResponse(ctx, "Failed while export Excel", err)
 		return
 	}
 

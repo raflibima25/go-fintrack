@@ -40,6 +40,14 @@ const routes = [
       title: 'Register'
     }
   },
+  {
+    path: '/auth/google/callback',
+    name: 'GoogleCallback',
+    component: () => import('@/views/GoogleCallback.vue'),
+    meta: {
+      requiresAuth: false
+    }
+  },
   // user routes
   {
     path: '/dashboard',

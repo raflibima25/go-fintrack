@@ -43,6 +43,9 @@ func main() {
 	}
 	logrus.Info("Database connected!")
 
+	// init google oauth config
+	config.InitGoogleOauthConfig()
+
 	// set gin mode
 	ginMode := os.Getenv("GIN_MODE")
 	if ginMode != "" {

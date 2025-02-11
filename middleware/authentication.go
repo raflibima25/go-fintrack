@@ -16,7 +16,7 @@ func Authentication() gin.HandlerFunc {
 		authHeader := ctx.GetHeader("Authorization")
 		logrus.Infof("Auth header: %s", authHeader) // debug
 		if authHeader == "" {
-			ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ctx.JSON(http.StatusUnauthorized, response.SuccessResponse{
 				ResponseStatus:  false,
 				ResponseMessage: "Authorization header is missing",
 				Data:            nil,
@@ -29,7 +29,7 @@ func Authentication() gin.HandlerFunc {
 		tokenString := strings.Split(authHeader, "Bearer ")[1]
 		token, err := utility.ParseJWT(tokenString)
 		if err != nil || !token.Valid {
-			ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ctx.JSON(http.StatusUnauthorized, response.SuccessResponse{
 				ResponseStatus:  false,
 				ResponseMessage: "Invalid token",
 				Data:            nil,

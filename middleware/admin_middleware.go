@@ -12,7 +12,7 @@ func AdminOnly() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		claims, exists := ctx.Get("claims")
 		if !exists {
-			ctx.JSON(http.StatusUnauthorized, response.ApiResponse{
+			ctx.JSON(http.StatusUnauthorized, response.SuccessResponse{
 				ResponseStatus:  false,
 				ResponseMessage: "Unauthorized",
 				Data:            nil,
@@ -24,7 +24,7 @@ func AdminOnly() gin.HandlerFunc {
 		if mapClaims, ok := claims.(jwt.MapClaims); ok {
 			isAdmin, exists := mapClaims["is_admin"]
 			if !exists || !isAdmin.(bool) {
-				ctx.JSON(http.StatusForbidden, response.ApiResponse{
+				ctx.JSON(http.StatusForbidden, response.SuccessResponse{
 					ResponseStatus:  false,
 					ResponseMessage: "Access denied: Admin only",
 					Data:            nil,

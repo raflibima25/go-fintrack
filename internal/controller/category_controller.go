@@ -22,9 +22,9 @@ type CategoryController struct {
 // @Accept 		json
 // @Produce 	json
 // @Security 	BearerAuth
-// @Success 	200 {object} response.ApiResponse
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	200 {object} response.SuccessResponse
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/category [get]
 func (c *CategoryController) GetAllCategoriesHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -39,7 +39,7 @@ func (c *CategoryController) GetAllCategoriesHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusOK, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Get categories successful",
 		Data: response.CategoryListResponse{
@@ -56,9 +56,9 @@ func (c *CategoryController) GetAllCategoriesHandler(ctx *gin.Context) {
 // @Produce 	json
 // @Security 	BearerAuth
 // @Param 		id path int true "Category ID"
-// @Success 	200 {object} response.ApiResponse
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	200 {object} response.SuccessResponse
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/category/{id} [get]
 func (c *CategoryController) GetCategoryIdHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -79,7 +79,7 @@ func (c *CategoryController) GetCategoryIdHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusOK, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Get category by id success",
 		Data:            category,
@@ -94,9 +94,9 @@ func (c *CategoryController) GetCategoryIdHandler(ctx *gin.Context) {
 // @Produce 	json
 // @Security 	BearerAuth
 // @Param 		request body request.CategoryRequest true "Category data"
-// @Success 	201 {object} response.ApiResponse
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	201 {object} response.SuccessResponse
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/category [post]
 func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -117,7 +117,7 @@ func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, response.ApiResponse{
+	ctx.JSON(http.StatusCreated, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Category created!",
 		Data:            category,
@@ -133,9 +133,9 @@ func (c *CategoryController) CreateCategoryHandler(ctx *gin.Context) {
 // @Security 	BearerAuth
 // @Param 		id path int true "Category ID"
 // @Param 		request body request.UpdateCategoryRequest true "Category data"
-// @Success 	200 {object} response.ApiResponse
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	200 {object} response.SuccessResponse
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/category/{id} [put]
 func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -162,7 +162,7 @@ func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusOK, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Category updated",
 		Data:            category,
@@ -177,9 +177,9 @@ func (c *CategoryController) UpdateCategoryHandler(ctx *gin.Context) {
 // @Produce 	json
 // @Security 	BearerAuth
 // @Param 		id path int true "Category ID"
-// @Success 	200 {object} response.ApiResponse
-// @Failure 	400 {object} response.ApiResponse
-// @Failure 	401 {object} response.ApiResponse
+// @Success 	200 {object} response.SuccessResponse
+// @Failure 	400 {object} response.SuccessResponse
+// @Failure 	401 {object} response.SuccessResponse
 // @Router 		/category/{id} [delete]
 func (c *CategoryController) DeleteCategoryHandler(ctx *gin.Context) {
 	userID, err := utility.GetUserIDFromContext(ctx)
@@ -199,7 +199,7 @@ func (c *CategoryController) DeleteCategoryHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.ApiResponse{
+	ctx.JSON(http.StatusOK, response.SuccessResponse{
 		ResponseStatus:  true,
 		ResponseMessage: "Category deleted",
 		Data:            nil,

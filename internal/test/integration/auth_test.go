@@ -125,7 +125,7 @@ func TestRegisterHandler(t *testing.T) {
 			assert.Equal(t, tt.expectedStatus, w.Code)
 
 			// Parse response
-			var response response.ApiResponse
+			var response response.SuccessResponse
 			err := json.Unmarshal(w.Body.Bytes(), &response)
 			assert.NoError(t, err)
 
@@ -236,7 +236,7 @@ func TestLoginHandler(t *testing.T) {
 			assert.Equal(t, tt.expectedStatus, w.Code)
 
 			// Parse response
-			var response response.ApiResponse
+			var response response.SuccessResponse
 			err = json.Unmarshal(w.Body.Bytes(), &response)
 			assert.NoError(t, err)
 
