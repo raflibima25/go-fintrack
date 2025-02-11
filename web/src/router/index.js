@@ -9,12 +9,15 @@ const PageNotFound = () => import('@/views/PageNotFound.vue')
 const TransactionList = () => import('@/views/TransactionList.vue')
 const CategoryList = () => import('@/views/CategoryList.vue')
 const ChatAssistant = () => import('@/views/ChatAssistant.vue')
+const LandingPage = () => import('@/views/LandingPage.vue')
 
 const routes = [
   // public routes
   {
     path: '/',
-    redirect: '/login'
+    name: 'LandingPage',
+    component: LandingPage,
+    meta: { requiresAuth: false }
   },
   {
     path: '/:pathMatch(.*)*',
