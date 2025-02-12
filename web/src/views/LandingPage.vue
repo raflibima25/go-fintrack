@@ -2,13 +2,22 @@
 <script setup>
 import { ref } from 'vue'
 import { 
-  CloudArrowUpIcon, 
-  LockClosedIcon, 
-  ServerIcon, 
+  PresentationChartBarIcon,
+  CalendarDateRangeIcon,
+  LockClosedIcon,
   ArrowPathIcon,
   Bars3Icon,
   XMarkIcon 
 } from '@heroicons/vue/24/outline'
+// logo fintrack
+import logoFintrack from '../assets/logo-fintrack-new.webp'
+// import blog images
+import aionyHaust from '../assets/blog/blog-avatar/aiony-haust-3TLl_97HNJo-unsplash.webp'
+import ianDooley from '../assets/blog/blog-avatar/ian-dooley-d1UPkiFd04A-unsplash.webp'
+import michaelDam from '../assets/blog/blog-avatar/michael-dam-mEZ3PoFGs_k-unsplash.webp'
+import mihaiMoisa from '../assets/blog/mihai-moisa-Djtc1T38-GY-unsplash.webp'
+import nathanDumlaoA0t from '../assets/blog/nathan-dumlao-A0tNoiSq4mo-unsplash.webp'
+import nathanDumlaoY3A from '../assets/blog/nathan-dumlao-Y3AqmbmtLQI-unsplash.webp'
 
 const mobileMenuOpen = ref(false)
 
@@ -23,65 +32,56 @@ const navigation = [
 // Features data
 const features = [
   {
-    name: 'Push to deploy',
-    description: 'Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.',
-    icon: CloudArrowUpIcon,
+    name: 'Smart Budgeting',
+    description: 'Track your income and expenses effortlessly with automated categorization and insightful reports.',
+    icon: PresentationChartBarIcon,
   },
   {
-    name: 'SSL certificates',
-    description: 'Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.',
+    name: 'Secure Transactions',
+    description: 'Your financial data is encrypted and protected with the latest security standards for peace of mind.',
     icon: LockClosedIcon,
   },
   {
-    name: 'Simple queues',
-    description: 'Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.',
+    name: 'Automated Savings',
+    description: 'Set savings goals and let our system automatically allocate funds to help you achive them faster.',
     icon: ArrowPathIcon,
   },
   {
-    name: 'Advanced security',
-    description: 'Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.',
-    icon: ServerIcon,
+    name: 'Financial Planning',
+    description: 'Plan ahead with expense forecasts, bill reminders, and investment tracking for long-term stability.',
+    icon: CalendarDateRangeIcon,
   },
 ]
 
-// Pricing data
-const pricing = [
+// Blog data
+const blogs = [
   {
-    name: 'Freelancer',
-    price: '$19',
-    description: 'The essentials to provide your best work for clients.',
-    features: [
-      '5 products',
-      'Up to 1,000 subscribers',
-      'Basic analytics',
-      '48-hour support response time'
-    ],
+    title: 'Boost your conversion rate',
+    date: 'Jan 16, 2025',
+    author: {
+      name: 'Michael Foster',
+      imageUrl: aionyHaust
+    },
+    imageUrl: mihaiMoisa,
   },
   {
-    name: 'Startup',
-    price: '$49',
-    description: 'A plan that scales with your rapidly growing business.',
-    features: [
-      '25 products',
-      'Up to 10,000 subscribers',
-      'Advanced analytics',
-      '24-hour support response time',
-      'Marketing automations'
-    ],
-    mostPopular: true,
+    title: 'How to use search engine optimization to drive sales',
+    date: 'Feb 10, 2025', 
+    author: {
+      name: 'Lindsay Walton',
+      imageUrl: ianDooley
+    },
+    imageUrl: nathanDumlaoA0t,
   },
   {
-    name: 'Enterprise',
-    price: '$99',
-    description: 'Dedicated support and infrastructure for your company.',
-    features: [
-      'Unlimited products',
-      'Unlimited subscribers',
-      'Advanced analytics',
-      '1-hour, dedicated support response time',
-      'Marketing automations',
-    ],
-  },
+    title: 'Improve your customer experience',
+    date: 'Feb 12, 2025',
+    author: {
+      name: 'Tom Cook',
+      imageUrl: michaelDam
+    },
+    imageUrl: nathanDumlaoY3A,
+  }
 ]
 
 // Footer navigation
@@ -115,14 +115,29 @@ const footerNavigation = {
 // FAQ data
 const faqs = [
   {
-    question: "What's the best thing about Switzerland?",
-    answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat."
+    question: "What is financial management?",
+    answer: "Financial management refers to the strategic planning, organizing, directing, and controlling of financial resources to achieve financial goals efficiently."
   },
   {
-    question: 'How do you make holy water?',
-    answer: 'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam aut tempora vitae odio inventore fuga aliquam nostrum quod porro. Delectus quia facere id sequi expedita natus.'
+    question: "Why is budgeting important?",
+    answer: "Budgeting helps track income and expenses, ensuring you live within your means, save for the future, and avoid unnecessary debt."
   },
-]
+  {
+    question: "How can I improve my financial health?",
+    answer: "You can improve your financial health by creating a budget, saving regularly, managing debt wisely, and investing for long-term growth."
+  },
+  {
+    question: "What are the benefits of automated savings?",
+    answer: "Automated savings help you consistently set aside money for emergencies, retirement, and financial goals without having to think about it."
+  },
+  {
+    question: "Is my financial data secure?",
+    answer: "Yes, our platform uses advanced encryption and security protocols to ensure your financial data is safe and protected."
+  }
+];
+
+// Get the current year
+const currentYear = new Date().getFullYear();
 </script>
 
 <template>
@@ -133,8 +148,8 @@ const faqs = [
         <!-- Logo -->
         <div class="flex lg:flex-1">
           <a href="#" class="-m-1.5 p-1.5">
-            <span class="sr-only">Your Company</span>
-            <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+            <span class="sr-only">Fintrack</span>
+            <img class="h-10 w-auto" :src=logoFintrack alt="Fintrack Logo" />
           </a>
         </div>
 
@@ -163,7 +178,7 @@ const faqs = [
 
         <!-- Desktop login button -->
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" class="text-sm font-semibold leading-6 text-gray-900">
+          <a href="/login" class="text-sm font-semibold leading-6 text-gray-900">
             Log in <span aria-hidden="true">→</span>
           </a>
         </div>
@@ -175,8 +190,8 @@ const faqs = [
         <div class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div class="flex items-center justify-between">
             <a href="#" class="-m-1.5 p-1.5">
-              <span class="sr-only">Your Company</span>
-              <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+              <span class="sr-only">Fintrack</span>
+              <img class="h-10 w-auto" :src=logoFintrack alt="Fintrack Logo" />
             </a>
             <button 
               type="button" 
@@ -199,7 +214,7 @@ const faqs = [
                 </a>
               </div>
               <div class="py-6">
-                <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                <a href="/login" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
                   Log in
                 </a>
               </div>
@@ -221,13 +236,13 @@ const faqs = [
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
           <div class="mx-auto max-w-2xl text-center">
             <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Deploy to the cloud with confidence
+              Manage your finances smartly
             </h1>
             <p class="mt-6 text-lg leading-8 text-gray-600">
-              Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua.
+              Manage your expenses, increase your savings, and achieve your financial goals with ease. Safe, efficient and practical financial solutions for a more peaceful life.
             </p>
             <div class="mt-10 flex items-center justify-center gap-x-6">
-              <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              <a href="/login" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 Get started
               </a>
               <a href="#" class="text-sm font-semibold leading-6 text-gray-900">
@@ -240,14 +255,14 @@ const faqs = [
     </div>
 
     <!-- Features section -->
-    <div class="mx-auto mt-32 max-w-7xl px-6 sm:mt-56 lg:px-8">
-      <div class="mx-auto max-w-2xl lg:text-center">
-        <h2 class="text-base font-semibold leading-7 text-indigo-600">Deploy faster</h2>
+    <div class="mx-auto max-w-7xl px-6 sm:mt-24 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-base font-semibold leading-7 text-indigo-600">Tool faster</h2>
         <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          Everything you need to deploy your app
+          Everything you need to manage your finances with ease
         </p>
         <p class="mt-6 text-lg leading-8 text-gray-600">
-          Quis tellus eget adipiscing convallis sit sit eget aliquet quis. Suspendisse eget egestas a elementum pulvinar et feugiat blandit at.
+          Take control of your financial future with powerful tools designed to help you budget, save, and invest wisely.
         </p>
       </div>
       <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
@@ -265,68 +280,48 @@ const faqs = [
       </div>
     </div>
 
-    <!-- Pricing section -->
+    <!-- Blog section -->
     <div class="py-24 sm:pt-48">
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
         <div class="mx-auto max-w-4xl text-center">
-          <h2 class="text-base font-semibold leading-7 text-indigo-600">Pricing</h2>
+          <h2 class="text-base font-semibold leading-7 text-indigo-600">Blog</h2>
           <p class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Pricing that grows with you
+            From the blog
           </p>
           <p class="mt-6 text-lg leading-8 text-gray-600">
-            Qui tellus eget adipiscing convallis sit sit eget aliquet quis. Suspendisse eget egestas a elementum pulvinar.
+            Learn how to grow your business with our expert advice.
           </p>
         </div>
-        <div class="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          <div 
-            v-for="tier in pricing" 
-            :key="tier.name" 
-            :class="[
-              tier.mostPopular ? 'lg:z-10 lg:rounded-3xl' : 'lg:mt-8',
-              'flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10'
-            ]"
-          >
-            <div>
-              <div class="flex items-center justify-between gap-x-4">
-                <h3 
-                  :class="[
-                    tier.mostPopular ? 'text-indigo-600' : 'text-gray-900',
-                    'text-lg font-semibold leading-8'
-                  ]"
-                >
-                  {{ tier.name }}
-                </h3>
-                <p 
-                  v-if="tier.mostPopular" 
-                  class="rounded-full bg-indigo-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-indigo-600"
-                >
-                  Most popular
-                </p>
+
+        <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <article v-for="post in blogs" :key="post.title" class="flex flex-col items-start relative isolate overflow-hidden rounded-2xl h-[400px]">
+            <!-- Background image -->
+            <img
+              :src="post.imageUrl"
+              :alt="post.title"
+              class="absolute inset-0 h-full w-full object-cover"
+            />
+            <!-- Gradient overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-900/75 to-gray-900/0"></div>
+            
+            <div class="relative p-8 flex flex-col h-full justify-end">
+              <!-- Date and author -->
+              <div class="flex items-center gap-x-4 text-sm leading-6 text-white">
+                <time :datetime="post.date">{{ post.date }}</time>
+                <div class="flex items-center gap-x-2">
+                  <img :src="post.author.imageUrl" :alt="post.author.name" class="h-6 w-6 rounded-full bg-white/10" />
+                  <span>{{ post.author.name }}</span>
+                </div>
               </div>
-              <p class="mt-4 text-sm leading-6 text-gray-600">{{ tier.description }}</p>
-              <p class="mt-6 flex items-baseline gap-x-1">
-                <span class="text-4xl font-bold tracking-tight text-gray-900">{{ tier.price }}</span>
-                <span class="text-sm font-semibold leading-6 text-gray-600">/month</span>
-              </p>
-              <ul role="list" class="mt-8 space-y-3 text-sm leading-6 text-gray-600">
-                <li v-for="feature in tier.features" :key="feature" class="flex gap-x-3">
-                  <svg class="h-6 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                  </svg>
-                  {{ feature }}
-                </li>
-              </ul>
+              <!-- Title -->
+              <h3 class="mt-3 text-lg font-semibold leading-6 text-white">
+                <a href="#">
+                  <span class="absolute inset-0"></span>
+                  {{ post.title }}
+                </a>
+              </h3>
             </div>
-            <a 
-              href="#" 
-              :class="[
-                tier.mostPopular ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-500' : 'text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300',
-                'mt-8 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-              ]"
-            >
-              Buy plan
-            </a>
-          </div>
+          </article>
         </div>
       </div>
     </div>
@@ -345,7 +340,7 @@ const faqs = [
     </div>
 
     <!-- CTA section -->
-    <div class="relative isolate mt-32 px-6 py-32 sm:mt-56 sm:py-40 lg:px-8">
+    <div class="relative isolate px-6 py-32 sm:mt-24 sm:py-40 lg:px-8">
       <div class="absolute inset-x-0 top-0 -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]">
         <div 
           class="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:w-[72.1875rem]" 
@@ -354,13 +349,13 @@ const faqs = [
       </div>
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          Boost your productivity.<br>Start using our app today.
+          Take Control of Your Finances.<br>Start Managing Smarter Today.
         </h2>
         <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-600">
-          Incididunt sint fugiat pariatur cupidatat consectetur sit cillum anim id veniam aliqua proident excepteur commodo do ea.
+          Simplify your financial management, track expenses, set budgets, and achieve your financial goals effortlessly.
         </p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
-          <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          <a href="/login" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             Get started
           </a>
           <a href="#" class="text-sm font-semibold leading-6 text-gray-900">
@@ -376,7 +371,7 @@ const faqs = [
       <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
           <div class="space-y-8">
-            <img class="h-7" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Company name" />
+            <img class="h-7" :src=logoFintrack alt="Fintrack" />
             <p class="text-sm leading-6 text-gray-600">
               Making the world a better place through constructing elegant hierarchies.
             </p>
@@ -436,7 +431,7 @@ const faqs = [
         </div>
         <div class="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24">
           <p class="text-xs leading-5 text-gray-500">
-            &copy; 2024 Your Company, Inc. All rights reserved.
+            &copy; <span>{{ currentYear }}</span> Fintrack, Inc. All rights reserved.
           </p>
         </div>
       </div>
