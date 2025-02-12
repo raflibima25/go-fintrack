@@ -113,7 +113,7 @@ const handleLogin = async (e) => {
         <div class="text-center">
             <h2 class="text-2xl font-bold text-gray-900">Login</h2>
             <p class="mt-2 text-gray-600">Don't have an account?
-                <router-link to="/register" class="text-blue-500 hover:text-blue-600 font-medium">
+                <router-link to="/register" class="text-indigo-600 hover:text-indigo-500 font-medium">
                     Register Here
                 </router-link>
             </p>
@@ -151,7 +151,7 @@ const handleLogin = async (e) => {
                     v-model="formState.identifier"
                     type="text"
                     :class="[
-                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
                         formState.errors.identifier ? 'border-red-300' : 'border-gray-300'
                     ]" 
                     :disabled="formState.isLoading"
@@ -172,7 +172,7 @@ const handleLogin = async (e) => {
                         v-model="formState.password"
                         :type="showPassword ? 'text' : 'password'"
                         :class="[
-                            'block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+                            'block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
                             formState.errors.password ? 'border-red-500' : 'border-gray-300'
                         ]"
                         :disabled="formState.isLoading"
@@ -200,7 +200,7 @@ const handleLogin = async (e) => {
                     'w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm font-medium text-white',
                     formState.isLoading
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                        : 'bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                 ]"
             >
                 <span v-if="formState.isLoading">Loading...</span>

@@ -109,7 +109,7 @@ const register = async () => {
         <div class="text-center">
             <h2 class="text-2xl font-bold text-gray-900">Create Account</h2>
             <p class="mt-2 text-gray-600">Have an account?
-                <router-link to="/login" class="text-blue-500 hover:text-blue-600 font-medium">
+                <router-link to="/login" class="text-indigo-600 hover:text-indigo-500 font-medium">
                     Login Here
                 </router-link>
             </p>
@@ -143,7 +143,7 @@ const register = async () => {
                     type="text"
                     :disabled="formState.isLoading"
                     :class="[
-                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm',
+                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
                         formState.errors.name ? 'border-red-300' : 'border-gray-300'
                     ]"
                     placeholder="Enter your fullname"
@@ -161,7 +161,7 @@ const register = async () => {
                     type="text"
                     :disabled="formState.isLoading"
                     :class="[
-                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm',
+                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
                         formState.errors.username ? 'border-red-300' : 'border-gray-300'
                     ]"
                     placeholder="Enter your username"
@@ -179,7 +179,7 @@ const register = async () => {
                     type="email"
                     :disabled="formState.isLoading"
                     :class="[
-                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm',
+                        'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
                         formState.errors.email ? 'border-red-300' : 'border-gray-300'
                     ]"
                     placeholder="member@fintrack.com"
@@ -198,7 +198,7 @@ const register = async () => {
                         :type="showPassword ? 'text' : 'password'"
                         :disabled="formState.isLoading"
                         :class="[
-                            'block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                            'block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500',
                             formState.errors.password ? 'border-red-300' : 'border-gray-300'
                         ]"
                         placeholder="********"
@@ -227,7 +227,7 @@ const register = async () => {
                         :type="showConfirmPassword ? 'text' : 'password'"
                         :disabled="formState.isLoading"
                         :class="[
-                            'block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                            'block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500',
                             formState.errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                         ]"
                         placeholder="********"
@@ -250,7 +250,7 @@ const register = async () => {
             <button
                 type="submit"
                 :disabled="formState.isLoading"
-                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <span v-if="formState.isLoading">Registering...</span>
                 <span v-else>Register</span>
