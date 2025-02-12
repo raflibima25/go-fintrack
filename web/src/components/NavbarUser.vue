@@ -1,50 +1,36 @@
-<script>
+<script setup>
 import { computed, ref } from 'vue'
-import { useAuth } from '../composables/useAuth';
-import { Menu as MenuIcon, X, LayoutDashboard, Receipt, Tag, BotMessageSquare } from 'lucide-vue-next'
+import { useAuth } from '../composables/useAuth'
+import { 
+  Menu as MenuIcon, 
+  X, 
+  LayoutDashboard, 
+  Receipt, 
+  Tag, 
+  BotMessageSquare 
+} from 'lucide-vue-next'
+import logoFintrack from '@/assets/logo-fintrack-new.webp'
 
-export default {
-  name: 'NavbarUser',
+const { userName, logout } = useAuth()
+const showMobileMenu = ref(false)
+const showUserMenu = ref(false)
 
-  components: {
-    MenuIcon,
-    X,
-    LayoutDashboard,
-    Receipt,
-    Tag,
-    BotMessageSquare,
-  },
+// Tidak perlu menyimpan dalam variabel terpisah karena akan langsung digunakan
+const userInitials = computed(() => {
+  const name = userName.value || 'User'
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+})
 
-  setup() {
-    const { userName, logout } = useAuth()
-    const showMobileMenu = ref(false)
-    const showUserMenu = ref(false)
+const displayName = computed(() => {
+  return userName.value || 'User'
+})
 
-    const displayInitials = computed(() => {
-      const name = userName.value || 'User'
-      return name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-    })
-
-    const displayName = computed(() => {
-      return userName.value || 'User'
-    })
-
-    const handleLogout = async () => {
-      await logout()
-    }
-
-    return {
-      showMobileMenu,
-      showUserMenu,
-      userName: displayName,
-      userInitials: displayInitials,
-      handleLogout,
-    }
-  }
+const handleLogout = async () => {
+  await logout()
 }
 </script>
 
@@ -57,7 +43,7 @@ export default {
           <!-- Logo -->
           <div class="flex-shrink-0 flex items-center">
             <router-link to="/" class="text-2xl font-bold italic text-blue-600 font-montserrat">
-              FinTrack
+              <img class="h-14 w-auto" :src=logoFintrack alt="Fintrack Logo">
             </router-link>
           </div>
 
@@ -125,7 +111,7 @@ export default {
             >
               <div class="py-1">
                 <div class="px-4 py-2 text-sm text-gray-700">
-                  {{ userName }}
+                  {{ displayName }}
                 </div>
               </div>
               <div class="py-1">
