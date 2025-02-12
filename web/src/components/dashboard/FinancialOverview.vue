@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { dashboardService } from '../services/dashboardService';
-import { formatCurrency } from '../utils/formatters';
+import { dashboardService } from '../../services/dashboardService';
+import { formatCurrency } from '../../utils/formatters';
 import { Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-vue-next';
 
 const overview = ref({})
@@ -99,5 +99,4 @@ onMounted(() => {
             </div>
         </div>
     </div>
-    
 </template>

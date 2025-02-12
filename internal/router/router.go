@@ -73,6 +73,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 		dashboardRouter.Use(middleware.Authentication())
 		{
 			dashboardRouter.GET("/overview", dashboardController.GetFinancialOverviewHandler)
+			dashboardRouter.GET("/charts", dashboardController.GetDashboardChartsHandler)
 		}
 
 		// transaction endpoint

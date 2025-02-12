@@ -2,7 +2,8 @@
 import { onMounted } from "vue";
 import { useAuth } from "../composables/useAuth";
 import UserLayout from "../layouts/UserLayout.vue";
-import FinancialOverview from "../components/FinancialOverview.vue";
+import FinancialOverview from "../components/dashboard/FinancialOverview.vue";
+import ExpenseAnalysis from "../components/dashboard/ExpenseAnalysis.vue";
 
 const { checkAuth } = useAuth();
 
@@ -10,22 +11,6 @@ onMounted(() => {
   checkAuth('user');
 });
 </script>
-
-<style scoped>
-.dashboard-user {
-  padding: 20px;
-}
-
-h1 {
-  margin-bottom: 20px;
-}
-
-button {
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-</style>
 
 <template>
   <user-layout>
