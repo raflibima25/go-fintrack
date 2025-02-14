@@ -99,9 +99,51 @@ definitions:
     - date
     - type
     type: object
-  response.ApiResponse:
+  response.CategoryDistribution:
     properties:
-      data: {}
+      datasets:
+        items:
+          properties:
+            background_color:
+              items:
+                type: string
+              type: array
+            data:
+              items:
+                type: number
+              type: array
+          type: object
+        type: array
+      labels:
+        items:
+          type: string
+        type: array
+    type: object
+  response.ChartDataset:
+    properties:
+      background_color:
+        type: string
+      border_color:
+        type: string
+      data:
+        items:
+          type: number
+        type: array
+      label:
+        type: string
+    type: object
+  response.ErrorDetail:
+    properties:
+      field:
+        type: string
+      message: {}
+    type: object
+  response.ErrorResponse:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/response.ErrorDetail'
+        type: array
       message:
         type: string
       status:
@@ -118,6 +160,15 @@ definitions:
       total_page:
         type: integer
     type: object
+  response.RespDashboardCharts:
+    properties:
+      category_distribution:
+        $ref: '#/definitions/response.CategoryDistribution'
+      income_vs_expense:
+        $ref: '#/definitions/response.RespIncomeVsExpense'
+      top_expenses:
+        $ref: '#/definitions/response.TopExpenses'
+    type: object
   response.RespFinancialOverview:
     properties:
       current_balance:
@@ -128,6 +179,43 @@ definitions:
         type: number
       total_savings:
         type: number
+    type: object
+  response.RespIncomeVsExpense:
+    properties:
+      datasets:
+        items:
+          $ref: '#/definitions/response.ChartDataset'
+        type: array
+      labels:
+        items:
+          type: string
+        type: array
+    type: object
+  response.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  response.TopExpenses:
+    properties:
+      datasets:
+        items:
+          properties:
+            background_color:
+              type: string
+            data:
+              items:
+                type: number
+              type: array
+          type: object
+        type: array
+      labels:
+        items:
+          type: string
+        type: array
     type: object
   response.TransactionListResponse:
     properties:
@@ -200,15 +288,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       summary: Login user
       tags:
       - auth
@@ -231,11 +319,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       summary: Register new user
       tags:
       - auth
@@ -250,15 +338,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Get all categories
@@ -281,15 +369,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Create category
@@ -312,15 +400,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Delete category
@@ -342,15 +430,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Get category by ID
@@ -378,20 +466,49 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Update category
       tags:
       - categories
+  /dashboard/charts:
+    get:
+      consumes:
+      - application/json
+      description: Get user's dashboard charts including income vs expense, category
+        distribution, and top expenses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.RespDashboardCharts'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get dashboard charts data
   /dashboard/overview:
     get:
       consumes:
@@ -405,7 +522,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.ApiResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   $ref: '#/definitions/response.RespFinancialOverview'
@@ -413,11 +530,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Get financial overview
@@ -460,7 +577,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.ApiResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   $ref: '#/definitions/response.TransactionListResponse'
@@ -468,11 +585,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Get all transactions
@@ -496,7 +613,7 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.ApiResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   $ref: '#/definitions/response.TransactionResponse'
@@ -504,11 +621,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Get new transaction
@@ -531,15 +648,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Delete transaction
@@ -568,7 +685,7 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.ApiResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   $ref: '#/definitions/response.TransactionResponse'
@@ -576,11 +693,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Update transaction
@@ -618,11 +735,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.ApiResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Export transactions to Excel

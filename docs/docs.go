@@ -50,19 +50,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -96,13 +96,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -130,19 +130,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -179,19 +179,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -228,19 +228,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -284,19 +284,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -331,19 +331,68 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/charts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get user's dashboard charts including income vs expense, category distribution, and top expenses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get dashboard charts data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.RespDashboardCharts"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -373,7 +422,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ApiResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -389,13 +438,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -463,7 +512,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ApiResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -479,13 +528,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -524,7 +573,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ApiResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -540,13 +589,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -606,13 +655,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -660,7 +709,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.ApiResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -676,13 +725,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -717,19 +766,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ApiResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -879,10 +928,75 @@ const docTemplate = `{
                 }
             }
         },
-        "response.ApiResponse": {
+        "response.CategoryDistribution": {
             "type": "object",
             "properties": {
-                "data": {},
+                "datasets": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "background_color": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.ChartDataset": {
+            "type": "object",
+            "properties": {
+                "background_color": {
+                    "type": "string"
+                },
+                "border_color": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "label": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ErrorDetail": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string"
+                },
+                "message": {}
+            }
+        },
+        "response.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ErrorDetail"
+                    }
+                },
                 "message": {
                     "type": "string"
                 },
@@ -908,6 +1022,20 @@ const docTemplate = `{
                 }
             }
         },
+        "response.RespDashboardCharts": {
+            "type": "object",
+            "properties": {
+                "category_distribution": {
+                    "$ref": "#/definitions/response.CategoryDistribution"
+                },
+                "income_vs_expense": {
+                    "$ref": "#/definitions/response.RespIncomeVsExpense"
+                },
+                "top_expenses": {
+                    "$ref": "#/definitions/response.TopExpenses"
+                }
+            }
+        },
         "response.RespFinancialOverview": {
             "type": "object",
             "properties": {
@@ -922,6 +1050,63 @@ const docTemplate = `{
                 },
                 "total_savings": {
                     "type": "number"
+                }
+            }
+        },
+        "response.RespIncomeVsExpense": {
+            "type": "object",
+            "properties": {
+                "datasets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ChartDataset"
+                    }
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.TopExpenses": {
+            "type": "object",
+            "properties": {
+                "datasets": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "background_color": {
+                                "type": "string"
+                            },
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

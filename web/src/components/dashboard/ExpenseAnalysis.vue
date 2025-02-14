@@ -17,6 +17,7 @@ import {
 } from 'chart.js'
 import { dashboardService } from '../../services/dashboardService';
 import { useToast } from '@/composables/useToast';
+import { formatCurrency } from '@/utils/formatters'
 
 ChartJS.register(
     CategoryScale,
@@ -50,7 +51,7 @@ const lineChartOptions = {
         y: {
             beginAtZero: true,
             ticks: {
-                callback: (value) => `Rp.${value}`
+                callback: (value) => `${formatCurrency(value)}`
             }
         }
     }
@@ -86,7 +87,7 @@ const barChartOptions = {
         y: {
             beginAtZero: true,
             ticks: {
-                callback: (value) => `Rp.${value}`
+                callback: (value) => `${formatCurrency(value)}`
             }
         }
     }

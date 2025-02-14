@@ -4,6 +4,7 @@ import { useAuth } from "../composables/useAuth";
 import UserLayout from "../layouts/UserLayout.vue";
 import FinancialOverview from "../components/dashboard/FinancialOverview.vue";
 import ExpenseAnalysis from "../components/dashboard/ExpenseAnalysis.vue";
+import RecentActivity from "../components/dashboard/RecentActivity.vue";
 
 const { checkAuth } = useAuth();
 
@@ -36,7 +37,7 @@ onMounted(() => {
           </div>
 
           <!-- recent activity -->
-          <div class="col-span-12 lg:col-span-8">
+          <div class="col-span-12 lg:col-span-4">
             <RecentActivity />
           </div>
 
