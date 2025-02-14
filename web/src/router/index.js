@@ -129,7 +129,7 @@ const getUserRole = () => (isAdmin() ? 'admin' : 'user')
 // Navigation guard yang dioptimalkan
 router.beforeEach(async (to, from, next) => {
   // Update title
-  document.title = `${to.meta.title || 'Manajemen Keuangan'}`
+  document.title = `${to.meta.title || 'Financial Tracker'}`
 
   // Jika route memerlukan auth dan user tidak terautentikasi
   if (to.meta.requiresAuth && !isAuthenticated()) {
