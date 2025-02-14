@@ -26,12 +26,14 @@ export default {
         <div class="hidden lg:flex lg:w-1/2 items-center justify-end p-12">
           <div class="w-full max-w-xl flex items-center justify-end">
             <div class="w-full max-w-md space-y-4">
-              <img src="../assets/logo-fintrack-new.webp" alt="Fintrack Logo" class="w-24 h-auto mx-auto -mb-20" />
-              <img 
-                :src="illustrationSrc" 
-                alt="Authentication Illustration"
-                class="max-w-md"
-              />
+              <router-link to="/">
+                <img src="../assets/logo-fintrack-new.webp" alt="Fintrack Logo" class="w-24 h-auto mx-auto -mb-20" />
+                <img 
+                  :src="illustrationSrc" 
+                  alt="Authentication Illustration"
+                  class="max-w-md"
+                />
+              </router-link>
             </div>
           </div>
         </div>
@@ -42,12 +44,14 @@ export default {
             <!-- Mobile view illustration -->
             <div class="lg:hidden text-center mb-8">
               <div class="w-full max-w-md space-y-4">
-                <img src="../assets/logo-fintrack-new.webp" alt="Fintrack Logo" class="w-24 h-auto mx-auto -mb-10" />
-                <img 
-                  :src="illustrationSrc" 
-                  alt="Authentication Illustration"
-                  class="w-64 h-auto mx-auto"
-                />
+                <router-link to="/">
+                  <img src="../assets/logo-fintrack-new.webp" alt="Fintrack Logo" class="w-24 h-auto mx-auto -mb-10" />
+                  <img 
+                    :src="illustrationSrc" 
+                    alt="Authentication Illustration"
+                    class="w-64 h-auto mx-auto"
+                  />
+              </router-link>
               </div>
             </div>
   
