@@ -190,7 +190,7 @@ onMounted(() => {
   <UserLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <!-- Header Section with Glassmorphism -->
-      <div class="bg-white/30 backdrop-blur-xl border border-gray-200/50 rounded-2xl p-6 shadow-lg">
+      <div class="bg-white/30 border border-gray-200/50 rounded-2xl p-6 shadow-sm">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 class="text-2xl font-bold text-black bg-clip-text">

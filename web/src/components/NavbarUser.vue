@@ -172,7 +172,7 @@ const handleLogout = async () => {
         <router-link
           to="/chat-assistant"
           class="flex items-center px-3 py-2 text-base font-medium"
-          :class="[$route.path === '/categories' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50']"
+          :class="[$route.path === '/chat-assistant' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50']"
         >
           <BotMessageSquare class="w-5 h-5 mr-3" />
           AI Assistant
