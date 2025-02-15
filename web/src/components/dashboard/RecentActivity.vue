@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { transactionService } from '@/services/transactionService';
 import { Button } from '@/components/ui/button';
-import AddTransaction from '../transaction/AddTransactionModal.vue';
+import AddTransactionModal from '../transaction/AddTransactionModal.vue';
 import { formatDate, formatCurrency, parseDate } from '@/utils/formatters';
 
 const transactions = ref([]);
@@ -65,7 +65,8 @@ onMounted(() => {
           <DialogHeader>
             <DialogTitle>Add New Transaction</DialogTitle>
           </DialogHeader>
-          <AddTransaction @transaction-added="handleTransactionAdded" />
+          <!-- Component Add Transaction -->
+          <AddTransactionModal @transaction-added="handleTransactionAdded" />
         </DialogContent>
       </Dialog>
     </div>
