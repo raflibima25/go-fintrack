@@ -464,7 +464,7 @@ onMounted(() => {
       </div>
 
       <!-- Edit Transaction Dialog -->
-      <Dialog 
+      <Dialog
         :open="showEditDialog"
         @update:open="(value) => showEditDialog = value"
       >
@@ -481,9 +481,9 @@ onMounted(() => {
       </Dialog>
 
       <!-- Delete Confirmation Dialog -->
-      <AlertDialog :open="showDeleteDialog" @update:open="(value) => showDeleteDialog = value">
-        <AlertDialogContent>
-          <AlertDialogHeader>
+      <AlertDialog   :open="showDeleteDialog" @update:open="(value) => showDeleteDialog = value">
+        <AlertDialogContent  >
+          <AlertDialogHeader >
             <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete this transaction? This action cannot be undone.
