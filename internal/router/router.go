@@ -109,6 +109,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB) {
 	r.Static("/js", "./web/dist/js")
 	r.Static("/css", "./web/dist/css")
 	r.Static("/assets", "./web/dist/assets")
+	r.Static("/vector", "./web/dist/vector")
 	r.StaticFile("/favicon.ico", "./web/dist/favicon.ico")
 
 	// handle SPA routing
