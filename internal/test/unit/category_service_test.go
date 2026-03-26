@@ -2,6 +2,7 @@ package unit
 
 import (
 	"database/sql"
+	"go-fintrack/internal/payload/request"
 	"go-fintrack/internal/service"
 	"io"
 	"log"
@@ -99,7 +100,8 @@ func (suite *CategoryServiceTestSuite) TestCreateCategory() {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	suite.mock.ExpectCommit()
 
-	category, err := suite.service.CreateCategory(name, userID)
+	req := &request.CategoryRequest{Name: name}
+	category, err := suite.service.CreateCategory(req, userID)
 
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), category)
@@ -137,7 +139,8 @@ func (suite *CategoryServiceTestSuite) TestUpdateCategory() {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	suite.mock.ExpectCommit()
 
-	result, err := suite.service.UpdateCategory(categoryID, userID, newName)
+	req := &request.UpdateCategoryRequest{Name: newName}
+	result, err := suite.service.UpdateCategory(categoryID, userID, req)
 
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), result)
